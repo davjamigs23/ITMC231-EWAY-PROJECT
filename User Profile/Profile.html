@@ -41,8 +41,16 @@
       <!-- Profile Header -->
       <div class="bg-gradient-to-r from-teal-600 to-teal-400 p-8 text-white">
         <div class="flex flex-col md:flex-row items-center">
-          <div class="w-32 h-32 rounded-full bg-white p-1 mb-4 md:mb-0 md:mr-8">
-            <img src="../Images/User Logo.png" alt="Profile" class="w-full h-full rounded-full object-cover">
+          <div class="w-32 flex flex-col items-center mb-4 md:mb-0 md:mr-8">
+            <div class="h-32 w-32 rounded-full bg-white p-1 flex items-center justify-center mb-2">
+              <img id="profile-photo" src="../Images/User Logo.png" alt="Profile" class="w-full h-full rounded-full object-cover border-2 border-teal-300">
+            </div>
+            <button id="change-photo-btn" type="button" class="px-3 py-1 text-xs rounded bg-teal-600 text-white hover:bg-teal-700 shadow mb-2">Change photo</button>
+            <input type="file" id="photo-input" accept="image/*" class="hidden">
+            <div id="photo-action-btns" class="flex gap-2 mt-1" style="display:none;">
+              <button id="save-photo-btn" class="px-2 py-1 text-xs rounded bg-green-600 text-white hover:bg-green-700">Save</button>
+              <button id="cancel-photo-btn" class="px-2 py-1 text-xs rounded bg-gray-400 text-white hover:bg-gray-600">Cancel</button>
+            </div>
           </div>
           <div class="text-center md:text-left">
             <h1 class="text-3xl font-bold" id="user-name">Loading...</h1>
@@ -58,147 +66,130 @@
         <!-- Personal Information -->
         <div class="mb-8">
           <h2 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Personal Information</h2>
-          <form id="profile-form" class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-                <input type="text" id="first-name" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                <input type="text" id="last-name" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
-              </div>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input type="email" id="email" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500" disabled>
-            </div>
-            <div class="pt-2">
-              <button type="submit" class="btn-primary text-white px-6 py-2 rounded-lg font-medium">
-                Update Profile
-              </button>
-            </div>
-          </form>
+          <div class="space-y-4">
+  <div>
+    <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+    <input type="text" id="full-name" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500" disabled>
+  </div>
+  <div>
+    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+    <input type="email" id="email" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500" disabled>
+  </div>
+</div>
         </div>
 
-        <!-- Change Password -->
-        <div>
-          <h2 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Change Password</h2>
-          <form id="password-form" class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
-              <input type="password" id="current-password" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
-              <input type="password" id="new-password" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
-              <input type="password" id="confirm-password" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
-            </div>
-            <div class="pt-2">
-              <button type="submit" class="btn-primary text-white px-6 py-2 rounded-lg font-medium">
-                Change Password
-              </button>
-            </div>
-          </form>
-        </div>
+        
       </div>
     </div>
+  </div>
+
+  <div class="flex justify-center mt-8">
+    <a href="../Homepage/HomepageWithAccount.html" class="inline-block px-6 py-2 rounded-lg bg-teal-600 text-white font-semibold shadow hover:bg-teal-700 transition">← Go Back</a>
   </div>
 
   <script type="module">
     import { supabase } from '../js/supabase-config.js';
     import { checkAuth, signOut } from '../js/auth.js';
 
-    // Check if user is logged in
+    let currentUser = null;
+    let originalPhotoUrl = null;
+    let newPhotoFile = null;
+    let newPhotoPreviewUrl = null;
+
     document.addEventListener('DOMContentLoaded', async () => {
-      const user = await checkAuth();
+      const { user } = await checkAuth();
       if (!user) {
         window.location.href = '../Account/SignIn.html';
         return;
       }
-
-      // Load user data
+      currentUser = user;
       loadUserData(user);
+      setupProfilePhoto(user);
       setupEventListeners();
     });
 
-    // Load user data into form
     function loadUserData(user) {
-      document.getElementById('first-name').value = user.user_metadata?.first_name || '';
-      document.getElementById('last-name').value = user.user_metadata?.last_name || '';
+      document.getElementById('full-name').value = user.full_name || '';
       document.getElementById('email').value = user.email || '';
-      document.getElementById('user-name').textContent = 
-        `${user.user_metadata?.first_name || ''} ${user.user_metadata?.last_name || 'User'}`.trim() || 'User';
+      document.getElementById('user-name').textContent = user.full_name || 'User';
       document.getElementById('user-email').textContent = user.email || '';
-      
-      const userRole = user.user_metadata?.role || 'User';
-      document.getElementById('user-role').textContent = `Role: ${userRole}`;
+      document.getElementById('user-role').textContent = 'Role: User';
+    }
 
-      if (userRole === 'admin') {
-        const dashboardLink = `<a href="../Admin/admin-dashboard.html" class="text-white hover:text-green-300 transition font-medium">Admin Dashboard</a>`;
-        document.getElementById('admin-dashboard-link-container').innerHTML = dashboardLink;
+    function setupProfilePhoto(user) {
+      const photoEl = document.getElementById('profile-photo');
+      originalPhotoUrl = user.avatar_url ? user.avatar_url : '../Images/User Logo.png';
+      photoEl.src = originalPhotoUrl;
+      // Reset action buttons
+      document.getElementById('photo-action-btns').style.display = 'none';
+      document.getElementById('change-photo-btn').style.display = '';
+      newPhotoFile = null;
+      newPhotoPreviewUrl = null;
+    }
+
+    document.getElementById('change-photo-btn').addEventListener('click', () => {
+      document.getElementById('photo-input').click();
+    });
+
+    document.getElementById('photo-input').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file.');
+        return;
       }
-    }
+      newPhotoFile = file;
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        document.getElementById('profile-photo').src = ev.target.result;
+        newPhotoPreviewUrl = ev.target.result;
+        document.getElementById('photo-action-btns').style.display = 'flex';
+        document.getElementById('change-photo-btn').style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    });
 
-    // Setup form event listeners
-    function setupEventListeners() {
-      // Profile form submission
-      document.getElementById('profile-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const firstName = document.getElementById('first-name').value.trim();
-        const lastName = document.getElementById('last-name').value.trim();
-        
-        try {
-          const { error } = await supabase.auth.updateUser({
-            data: { first_name: firstName, last_name: lastName }
-          });
-          
-          if (error) throw error;
-          
-          // Update displayed name
-          document.getElementById('user-name').textContent = `${firstName} ${lastName}`.trim();
-          
-          alert('Profile updated successfully!');
-        } catch (error) {
-          console.error('Error updating profile:', error);
-          alert('Failed to update profile. Please try again.');
-        }
-      });
+    document.getElementById('cancel-photo-btn').addEventListener('click', () => {
+      document.getElementById('profile-photo').src = originalPhotoUrl;
+      document.getElementById('photo-action-btns').style.display = 'none';
+      document.getElementById('change-photo-btn').style.display = '';
+      document.getElementById('photo-input').value = '';
+      newPhotoFile = null;
+      newPhotoPreviewUrl = null;
+    });
 
-      // Password form submission
-      document.getElementById('password-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const currentPassword = document.getElementById('current-password').value;
-        const newPassword = document.getElementById('new-password').value;
-        const confirmPassword = document.getElementById('confirm-password').value;
-        
-        if (newPassword !== confirmPassword) {
-          alert('New passwords do not match!');
-          return;
-        }
-        
-        try {
-          // Note: Supabase requires the user to be recently signed in for sensitive operations
-          // In a real app, you might need to re-authenticate the user first
-          const { error } = await supabase.auth.updateUser({
-            password: newPassword
-          });
-          
-          if (error) throw error;
-          
-          alert('Password updated successfully!');
-          document.getElementById('password-form').reset();
-        } catch (error) {
-          console.error('Error updating password:', error);
-          alert('Failed to update password. Please try again.');
-        }
-      });
-    }
+    document.getElementById('save-photo-btn').addEventListener('click', async () => {
+      if (!newPhotoFile || !currentUser) return;
+      const fileExt = newPhotoFile.name.split('.').pop();
+      const fileName = `${currentUser.id}.${fileExt}`;
+      const filePath = `profile-photos/${fileName}`;
+      // Upload to Supabase Storage
+      let { error: uploadError } = await supabase.storage.from('profile-photos').upload(filePath, newPhotoFile, { upsert: true, contentType: newPhotoFile.type });
+      if (uploadError) {
+        alert('Failed to upload image: ' + uploadError.message);
+        return;
+      }
+      // Get public URL
+      const { data } = supabase.storage.from('profile-photos').getPublicUrl(filePath);
+      const publicUrl = data.publicUrl;
+      // Update profile
+      let { error: updateError } = await supabase.from('profiles').update({ avatar_url: publicUrl }).eq('id', currentUser.id);
+      if (updateError) {
+        alert('Failed to update profile: ' + updateError.message);
+        return;
+      }
+      // Update UI
+      originalPhotoUrl = publicUrl;
+      document.getElementById('profile-photo').src = publicUrl;
+      document.getElementById('photo-action-btns').style.display = 'none';
+      document.getElementById('change-photo-btn').style.display = '';
+      document.getElementById('photo-input').value = '';
+      newPhotoFile = null;
+      newPhotoPreviewUrl = null;
+      alert('Profile photo updated!');
+    });
+
+    function setupEventListeners() {}
   </script>
 </body>
 </html>

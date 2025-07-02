@@ -501,62 +501,54 @@
     .containerinfo {
       max-width: 1000px;
 
-.brandinfo-content {
-  text-align: center;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-}
+    .brandinfo-content {
+      text-align: center;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
 
-.brandinfo-logo {
-  height: 120px;
-  width: auto;
-  transition: all 0.3s ease;
-}
+    .brandinfo-logo {
+      height: 120px;
+      width: auto;
+      transition: all 0.3s ease;
+    }
 
-.brandinfo-logo:hover {
-  transform: scale(1.05);
-}
+    .brandinfo-logo:hover {
+      transform: scale(1.05);
+    }
 
-.brandinfo-subheading {
-  font-size: 28px;
-  color: #093820;
-  position: relative;
-  display: inline-block;
-}
+    .brandinfo-subheading {
+      font-size: 28px;
+      color: #093820;
+      position: relative;
+      display: inline-block;
+    }
 
-.brandinfo-subheading::after {
-  content: '';
-  position: absolute;
-  width: 50%;
-  height: 3px;
-  bottom: -8px;
-  left: 25%;
-  background: linear-gradient(to right, #10b981, #3b82f6);
-  border-radius: 3px;
-}
+    .brandinfo-subheading::after {
+      content: '';
+      position: absolute;
+      width: 50%;
+      height: 3px;
+      bottom: -8px;
+      left: 25%;
+      background: linear-gradient(to right, #10b981, #3b82f6);
+      border-radius: 3px;
+    }
 
-.brandinfo-text {
-  font-size: 16px;
-  line-height: 1.6;
-  text-align: justify;
-  max-width: 800px;
-  margin: 0 auto;
-}
+    .brandinfo-text {
+      font-size: 16px;
+      line-height: 1.6;
+      text-align: justify;
+      max-width: 800px;
+      margin: 0 auto;
+    }
 
-/* Product Section */
-#product {
-  display: none;
-  padding: 60px 20px;
-  background-color: white;
-  border-radius: 10px;
-  margin: 40px auto;
-  max-width: 1200px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-  animation: fadeIn 0.5s ease;
-}
+    /* Product Section */
+    #product {
+      display: none;
       padding: 60px 20px;
       background-color: white;
       border-radius: 10px;
@@ -584,11 +576,32 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
+    .btn-filter {
+      position: relative;
+      overflow: hidden;
+    }
     .btn-filter:hover, .btn-filter.active {
       background: linear-gradient(to right, #10b981, #3b82f6);
       color: white;
       box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-      transform: translateY(-2px);
+      transform: translateY(-2px) scale(1.05);
+    }
+    .btn-filter::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+      z-index: 1;
+    }
+    .btn-filter:hover::before, .btn-filter.active::before {
+      left: 100%;
+    }
+    .btn-filter {
+      z-index: 2;
     }
 
     .product-filter-items {
@@ -762,11 +775,14 @@
 <body>
   <header>
     <nav>
-      <a href="/Homepage/HomepageWithAccount.html">Home</a>
-      <a href="/Showcase/ShowcaseWithAccount.html">Showcase</a>
-      <a href="/Registration/registration.html">Registration</a>
-      <a href="/Regulations/regulations.html">Regulations</a>
-      <a href="/Maintenance/Maintenance_Main.html">Maintenance</a>
+      <a href="../Homepage/HomepageWithAccount.html">Home</a>
+      <a href="ShowcaseWithAccount.html" class="active">Showcase</a>
+      <a href="../Registration/registration.html">Registration</a>
+      <a href="../Regulations/regulations.html">Regulations</a>
+      <a href="../Maintenance/Maintenance_Main.html">Maintenance</a>
+      <a href="../Features/Locations/Locations.html">Branch Locator</a>
+      <a href="../Features/Traffic/Traffic.html">Traffic Alerts</a>
+      <a href="../Features/Forum/Forum.html">Rider Forum</a>
     </nav>
     
     <div class="user-profile" id="user-profile">
@@ -1013,6 +1029,19 @@
 
     // Initialize MixItUp for product filtering
     let mixer = null;
+
+    // --- Vehicle Type Filter Button Animation ---
+    document.querySelectorAll('.btn-filter').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        // If using MixItUp, filter products
+        if (typeof mixer !== 'undefined' && mixer) {
+          const filterValue = this.getAttribute('data-filter');
+          mixer.filter(filterValue === 'all' ? 'all' : filterValue);
+        }
+      });
+    });
     
     // Check if user is logged in (simplified for demo)
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
@@ -1173,12 +1202,17 @@
       select.innerHTML = '<option value="">-- Select a brand --</option>';
       
       const brands = document.querySelectorAll(".tranding-slide");
+      const seenNames = new Set();
       brands.forEach((brand, index) => {
         if (brand.style.display !== "none") {
-          const option = document.createElement("option");
-          option.value = index;
-          option.textContent = brand.querySelector("img").alt;
-          select.appendChild(option);
+          const brandName = brand.querySelector("img").alt;
+          if (!seenNames.has(brandName)) {
+            const option = document.createElement("option");
+            option.value = index;
+            option.textContent = brandName;
+            select.appendChild(option);
+            seenNames.add(brandName);
+          }
         }
       });
     }
@@ -1191,31 +1225,37 @@
       const name = document.getElementById("edit-brand-name").value;
       const imageUrl = document.getElementById("edit-brand-image").value;
       const description = document.getElementById("edit-brand-description").value;
-
       const brandSlide = document.querySelectorAll(".tranding-slide")[index];
       const oldBrandId = brandSlide.getAttribute('data-brand');
-      
-      // Update the slide
-      brandSlide.setAttribute('data-brand', name.toLowerCase().replace(/\s+/g, '-'));
-      brandSlide.innerHTML = `
-        <div class="tranding-slide-img">
-          <a href="#" onclick="showBrandInfo('${name.toLowerCase().replace(/\s+/g, '-')}')">
-            <img src="${imageUrl}" alt="${name}">
-          </a>
-        </div>
-      `;
-      
-      // Update brand data
-      if (brandData[oldBrandId]) {
-        brandData[name.toLowerCase().replace(/\s+/g, '-')] = {
-          name: name,
-          image: imageUrl,
-          description: description,
-          products: brandData[oldBrandId].products || []
-        };
-        delete brandData[oldBrandId];
-      }
+      const newBrandId = name.toLowerCase().replace(/\s+/g, '-');
 
+      // Only update if something changed
+      if (
+        oldBrandId !== newBrandId ||
+        brandSlide.querySelector('img').alt !== name ||
+        brandSlide.querySelector('img').src !== imageUrl ||
+        (brandData[oldBrandId]?.description || "") !== description
+      ) {
+        // Update the slide
+        brandSlide.setAttribute('data-brand', newBrandId);
+        brandSlide.innerHTML = `
+          <div class="tranding-slide-img">
+            <a href="#" onclick="showBrandInfo('${newBrandId}')">
+              <img src="${imageUrl}" alt="${name}">
+            </a>
+          </div>
+        `;
+        // Update brand data
+        if (brandData[oldBrandId]) {
+          brandData[newBrandId] = {
+            name: name,
+            image: imageUrl,
+            description: description,
+            products: brandData[oldBrandId].products || []
+          };
+          if (oldBrandId !== newBrandId) delete brandData[oldBrandId];
+        }
+      }
       closeModal("edit-modal");
     }
 
@@ -1410,15 +1450,22 @@
       productContainer.innerHTML = '';
       
       brand.products.forEach(product => {
+        // Map type to correct filter class
+        let typeClass = '';
+        if (product.type.toLowerCase().includes('two')) typeClass = 'twowheels';
+        else if (product.type.toLowerCase().includes('three')) typeClass = 'threewheels';
+        else if (product.type.toLowerCase().includes('four')) typeClass = 'fourwheels';
+        else typeClass = product.type.toLowerCase(); // fallback
+
         const productElement = document.createElement('div');
-        productElement.className = `mix ${product.type}`;
+        productElement.className = `mix ${typeClass}`;
         productElement.innerHTML = `
           <div class="item-top">
             <img src="${product.image}" alt="${product.name}" />
           </div>
           <div class="item-bottom">
             <h1 class="item-heading">${product.name}</h1>
-            <h3 class="item-subheading">${product.type.replace('wheels', '-Wheels')}</h3>
+            <h3 class="item-subheading">${typeClass.replace('wheels', '-Wheels')}</h3>
             <div class="price-container">
               <h3 class="price">${product.price}</h3>
               <a href="#!" class="btn-cart">

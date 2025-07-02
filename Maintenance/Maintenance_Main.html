@@ -19,16 +19,18 @@
       line-height: 1.6;
     }
 
-    /* Header Styles */
+    /* Unified Header Styles */
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 25px 60px;
       background: linear-gradient(to right, #e7beb5, #c5efea);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      position: relative;
-      z-index: 10;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: all 0.3s ease;
     }
 
     nav {
@@ -38,16 +40,15 @@
 
     nav a {
       text-decoration: none;
-      color: #113c23;
-      font-weight: 500;
+      color: #333;
+      font-weight: 400;
       font-size: 17px;
-      transition: all 0.3s ease;
+      transition: color 0.3s;
       position: relative;
     }
 
     nav a:hover {
-      color: #10b981;
-      transform: translateY(-2px);
+      color: #4C9444;
     }
 
     nav a::after {
@@ -55,9 +56,9 @@
       position: absolute;
       width: 0;
       height: 2px;
-      bottom: -4px;
+      bottom: -5px;
       left: 0;
-      background-color: #10b981;
+      background-color: #4C9444;
       transition: width 0.3s;
     }
 
@@ -69,11 +70,6 @@
       position: relative;
       display: flex;
       align-items: center;
-      transition: transform 0.3s ease;
-    }
-
-    .user-profile:hover {
-      transform: scale(1.05);
     }
 
     .user-profile img {
@@ -464,7 +460,10 @@
       <a href="../Showcase/ShowcaseWithAccount.html">Showcase</a>
       <a href="../Registration/registration.html">Registration</a>
       <a href="../Regulations/regulations.html">Regulations</a>
-      <a href="Maintenance_Main.html">Maintenance</a>
+      <a href="../Maintenance/Maintenance_Main.html">Maintenance</a>
+      <a href="../Features/Locations.html">Branch Locator</a>
+      <a href="../Features/Traffic.html">Traffic Alerts</a>
+      <a href="../Features/Forum.html">Rider Forum</a>
     </nav>
 
     <!-- User profile dropdown -->

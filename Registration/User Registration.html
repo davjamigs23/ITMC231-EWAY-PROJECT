@@ -591,6 +591,36 @@
       border-color: #ef4444 !important;
     }
 
+    /* Terms Container Styles */
+    .terms-container {
+      margin: 20px 0;
+      padding: 15px;
+      background-color: rgba(255,255,255,0.8);
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .terms-link {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    .terms-link:hover {
+      text-decoration: underline;
+    }
+    
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .checkbox-group input[type="checkbox"] {
+      min-width: 18px;
+      min-height: 18px;
+    }
+
     /* Responsive adjustments */
     @media (max-width: 768px) {
       header {
@@ -631,6 +661,77 @@
         padding: 1.5rem;
         margin: 1.5rem;
       }
+    }
+
+    /* Quiz Styles */
+    .quiz-section {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 20px;
+      margin: 2rem auto;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      max-width: 800px;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .quiz-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .quiz-question {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .quiz-option {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .quiz-option:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .quiz-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+
+    .quiz-score {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+    }
+
+    .quiz-btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .quiz-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     }
   </style>
 </head>
@@ -680,7 +781,7 @@
             <input type="email" id="email" class="input-field" required>
             <div class="error-message" id="emailError">Please enter a valid email address</div>
           </div>
-          
+
           <div class="form-group">
             <label for="phone">Phone Number</label>
             <input type="tel" id="phone" class="input-field" required pattern="[0-9]{11}" title="Please enter a valid 11-digit phone number">
@@ -688,18 +789,118 @@
           </div>
           
           <div class="form-group">
-            <label for="address">Complete Address</label>
-            <input type="text" id="address" class="input-field" required minlength="10">
-            <div class="error-message" id="addressError">Please enter a complete address (at least 10 characters)</div>
+            <label for="street">Street Address</label>
+            <input type="text" id="street" class="input-field" required>
+            <div class="error-message" id="streetError">Please enter your street address</div>
+          </div>
+          
+          <div class="form-group">
+            <label for="city">City/Municipality</label>
+            <input type="text" id="city" class="input-field" required>
+            <div class="error-message" id="cityError">Please enter your city</div>
+          </div>
+          
+          <div class="form-group">
+            <label for="province">Province</label>
+            <input type="text" id="province" class="input-field" required>
+            <div class="error-message" id="provinceError">Please enter your province</div>
+          </div>
+          
+          <div class="form-group">
+            <label for="zip">ZIP Code</label>
+            <input type="text" id="zip" class="input-field" required pattern="[0-9]+" title="Numbers only">
+            <div class="error-message" id="zipError">Please enter a valid ZIP code</div>
+          </div>
+          
+          <div class="form-group">
+            <label for="birthDate">Date of Birth</label>
+            <input type="date" id="birthDate" class="input-field" required max="">
+            <div class="error-message" id="dobError">Please enter a valid date of birth</div>
+          </div>
+          
+          <div class="form-group">
+            <label for="idType">Government ID Type</label>
+            <select id="idType" class="input-field" required>
+              <option value="">-- Select ID Type --</option>
+              <option value="driver">Driver's License</option>
+              <option value="passport">Passport</option>
+              <option value="national">National ID</option>
+              <option value="sss">SSS/UMID</option>
+              <option value="gsis">GSIS ID</option>
+              <option value="philhealth">PhilHealth ID</option>
+              <option value="tin">TIN ID</option>
+              <option value="voter">Voter's ID</option>
+              <option value="postal">Postal ID</option>
+              <option value="senior">Senior Citizen ID</option>
+              <option value="pwd">PWD ID</option>
+              <option value="student">Student ID (Government Issued)</option>
+            </select>
+            <div class="error-message" id="idTypeError">Please select an ID type</div>
+          </div>
+          
+          <div class="form-group">
+            <label for="idNumber">Government ID Number</label>
+            <input type="text" id="idNumber" class="input-field" required>
+            <div class="error-message" id="idNumberError">Please enter your ID number</div>
           </div>
 
+          <div class="form-group">
+            <label for="emergencyContact">Emergency Contact Name</label>
+            <input type="text" id="emergencyContact" class="input-field" required>
+            <div class="error-message" id="emergencyNameError">Please enter emergency contact name</div>
+          </div>
+          
+          <div class="form-group">
+            <label for="emergencyPhone">Emergency Contact Phone</label>
+            <input type="tel" id="emergencyPhone" class="input-field" required pattern="[0-9]{11}">
+            <div class="error-message" id="emergencyPhoneError">Please enter a valid 11-digit phone number</div>
+          </div>
+          
+          <div class="form-group full-width">
+            <label for="idUpload">Upload ID/Receipt (Optional)</label>
+            <input type="file" id="idUpload" class="input-field" accept="image/*,.pdf">
+          </div>
+          
+          <div class="form-group full-width">
+            <label for="additionalNotes">Special Notes (Optional)</label>
+            <textarea id="additionalNotes" class="input-field" rows="3"></textarea>
+          </div>
+          
           <!-- E-Bike Information -->
           <h3 class="section-title">E-Bike Information</h3>
           
           <div class="form-group">
             <label for="ebikeBrand">Brand</label>
-            <input type="text" id="ebikeBrand" class="input-field" required>
-            <div class="error-message" id="brandError">Please enter the e-bike brand</div>
+            <select id="ebikeBrand" class="input-field" required>
+              <option value="">-- Select Brand --</option>
+              <option value="NWOW">NWOW</option>
+              <option value="Hatasu">Hatasu</option>
+              <option value="Kenwei">Kenwei</option>
+              <option value="Kuromake">Kuromake</option>
+              <option value="Johnson">Johnson</option>
+              <option value="Redstar">Redstar</option>
+              <option value="Surron">Surron</option>
+              <option value="other">Other</option>
+            </select>
+            <div class="error-message" id="brandError">Please select a brand</div>
+          </div>
+          
+          <div class="form-group" id="otherBrandContainer" style="display:none;">
+            <label for="otherBrand">Other Brand Name</label>
+            <input type="text" id="otherBrand" class="input-field">
+          </div>
+          
+          <div class="form-group">
+            <label for="ebikeType">E-Bike Type</label>
+            <select id="ebikeType" class="input-field" required>
+              <option value="">-- Select Type --</option>
+              <option value="2-wheels">2-Wheels</option>
+              <option value="3-wheels">3-Wheels</option>
+              <option value="4-wheels">4-Wheels</option>
+              <option value="scooter">Scooter</option>
+              <option value="bicycle">Electric Bicycle</option>
+            </select>
+            <div class="error-message" id="typeError">Please select an e-bike type</div>
           </div>
           
           <div class="form-group">
@@ -738,6 +939,17 @@
           <div class="form-group full-width">
             <label for="additionalNotes">Special Notes (Optional)</label>
             <textarea id="additionalNotes" class="input-field" rows="3"></textarea>
+          </div>
+        </div>
+
+        <div class="terms-container">
+          <div class="form-group checkbox-group">
+            <input type="checkbox" id="termsAgreement" required>
+            <label for="termsAgreement">
+              I agree to the <a href="#" class="terms-link">Terms and Conditions</a> and 
+              <a href="#" class="terms-link">Privacy Policy</a>
+            </label>
+            <div class="error-message" id="termsError">You must agree to the terms</div>
           </div>
         </div>
 
@@ -780,6 +992,19 @@
         </div>
       </div>
     </section>
+
+    <!-- E-Bike Quiz Game Section -->
+    <section class="quiz-section">
+      <h2 class="section-title">Test Your E-Bike Knowledge</h2>
+      <div class="quiz-container">
+        <div id="quiz-question" class="quiz-question"></div>
+        <div id="quiz-options" class="quiz-options"></div>
+        <div class="quiz-footer">
+          <div id="quiz-score" class="quiz-score">Score: 0</div>
+          <button id="quiz-next" class="quiz-btn">Next Question</button>
+        </div>
+      </div>
+    </section>
   </main>
 
   <!-- Delete Confirmation Modal -->
@@ -799,7 +1024,9 @@
     </div>
   </div>
 
-  <script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module" src="../js/supabase-config.js"></script>
+<script>
     const STORAGE_KEY = 'ebikeRegistrations';
     let currentEditingId = null;
     let originalData = null;
@@ -826,6 +1053,16 @@
       
       // Add input validation
       setupFormValidation();
+      
+      // Show/hide Other Brand input based on selection
+      document.getElementById('ebikeBrand').addEventListener('change', function() {
+        const otherContainer = document.getElementById('otherBrandContainer');
+        otherContainer.style.display = this.value === 'other' ? 'block' : 'none';
+        
+        if (this.value !== 'other') {
+          document.getElementById('otherBrand').value = '';
+        }
+      });
     });
 
     // Setup form validation
@@ -873,8 +1110,8 @@
       return isValid;
     }
 
-    // Form submission
-    document.getElementById('registrationForm').addEventListener('submit', function(e) {
+    // Form submission (with Supabase integration)
+    document.getElementById('registrationForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       
       if (!validateForm()) {
@@ -882,40 +1119,29 @@
         return;
       }
       
-      // Generate registration ID
-      const regId = 'REG-' + Math.floor(10000 + Math.random() * 90000);
-      const date = new Date();
-      const regDate = date.toISOString().split('T')[0];
-      const expiryDate = new Date(date.setFullYear(date.getFullYear() + 1)).toISOString().split('T')[0];
-      
-      // Create registration object
-      const registration = {
-        id: regId,
-        name: document.getElementById('fullName').value.trim(),
-        email: document.getElementById('email').value.trim(),
-        phone: document.getElementById('phone').value.trim(),
-        address: document.getElementById('address').value.trim(),
-        ebikeBrand: document.getElementById('ebikeBrand').value.trim(),
-        ebikeModel: document.getElementById('ebikeModel').value.trim(),
-        ebikeColor: document.getElementById('ebikeColor').value.trim(),
-        serialNumber: document.getElementById('serialNumber').value.trim(),
-        purchaseDate: document.getElementById('purchaseDate').value,
-        receiptNumber: document.getElementById('receiptNumber').value.trim(),
-        notes: document.getElementById('additionalNotes').value.trim(),
-        registrationDate: regDate,
-        expiryDate: expiryDate,
-        status: "Active"
-      };
-
-      // Add to storage
-      registrations.push(registration);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(registrations));
-      
-      // Show success message
-      alert(`Registration successful! Your Registration ID is: ${regId}\nPlease save this ID for future reference.`);
-      
-      // Reset form
-      this.reset();
+      // Get form values
+      const fullName = document.getElementById('fullName').value.trim();
+      const email = document.getElementById('email').value.trim();
+      // Supabase sign up
+      try {
+        const { data, error } = await supabase.auth.signUp({
+          email: email,
+          password: password
+        });
+        if (error) throw error;
+        const user = data.user;
+        // Insert profile data into 'profiles' table (make sure this table exists in Supabase)
+        const { error: profileError } = await supabase.from('profiles').insert([
+          { id: user.id, full_name: fullName, email: email }
+        ]);
+        if (profileError) throw profileError;
+        alert('Registration successful! You can now sign in.');
+        this.reset();
+        // Optionally redirect to sign in or profile page
+        // window.location.href = '../Account/SignIn.html';
+      } catch (err) {
+        alert('Registration failed: ' + err.message);
+      }
     });
 
     // Search functionality
@@ -976,8 +1202,20 @@
           <div class="detail-value">${registration.phone}</div>
         </div>
         <div class="detail-item">
-          <span class="detail-label">Address:</span>
-          <div class="detail-value">${registration.address}</div>
+          <span class="detail-label">Street Address:</span>
+          <div class="detail-value">${registration.street}</div>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">City/Municipality:</span>
+          <div class="detail-value">${registration.city}</div>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Province:</span>
+          <div class="detail-value">${registration.province}</div>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">ZIP Code:</span>
+          <div class="detail-value">${registration.zip}</div>
         </div>
         <div class="detail-item">
           <span class="detail-label">E-Bike Brand:</span>
@@ -1113,7 +1351,10 @@
         if (label.includes('Full Name')) updatedRegistration.name = input.value.trim();
         else if (label.includes('Email')) updatedRegistration.email = input.value.trim();
         else if (label.includes('Phone')) updatedRegistration.phone = input.value.trim();
-        else if (label.includes('Address')) updatedRegistration.address = input.value.trim();
+        else if (label.includes('Street Address')) updatedRegistration.street = input.value.trim();
+        else if (label.includes('City/Municipality')) updatedRegistration.city = input.value.trim();
+        else if (label.includes('Province')) updatedRegistration.province = input.value.trim();
+        else if (label.includes('ZIP Code')) updatedRegistration.zip = input.value.trim();
         else if (label.includes('E-Bike Brand')) updatedRegistration.ebikeBrand = input.value.trim();
         else if (label.includes('E-Bike Model')) updatedRegistration.ebikeModel = input.value.trim();
         else if (label.includes('E-Bike Color')) updatedRegistration.ebikeColor = input.value.trim();
@@ -1179,6 +1420,80 @@
       // Show success message
       alert('Registration deleted successfully!');
     }
+
+    // E-Bike Quiz Game
+    const quizQuestions = [
+      {
+        question: "What is the main advantage of an e-bike over a regular bicycle?",
+        options: ["Higher speed", "Electric pedal assistance", "No need to pedal at all", "Lighter weight"],
+        answer: 1
+      },
+      {
+        question: "What should you check regularly on your e-bike?",
+        options: ["Tire pressure", "Battery charge", "Brakes", "All of the above"],
+        answer: 3
+      },
+      {
+        question: "What's the typical range of an e-bike on a single charge?",
+        options: ["10-20 km", "30-100 km", "150-200 km", "Over 300 km"],
+        answer: 1
+      },
+      {
+        question: "Which component is most unique to e-bikes?",
+        options: ["Gears", "Electric motor", "Suspension", "Chain"],
+        answer: 1
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+  
+    function loadQuestion() {
+      const question = quizQuestions[currentQuestion];
+      document.getElementById('quiz-question').textContent = question.question;
+      
+      const optionsContainer = document.getElementById('quiz-options');
+      optionsContainer.innerHTML = '';
+      
+      question.options.forEach((option, index) => {
+        const button = document.createElement('button');
+        button.className = 'quiz-option';
+        button.textContent = option;
+        button.onclick = () => checkAnswer(index);
+        optionsContainer.appendChild(button);
+      });
+      
+      document.getElementById('quiz-score').textContent = `Score: ${score}`;
+    }
+  
+    function checkAnswer(selectedIndex) {
+      const correctIndex = quizQuestions[currentQuestion].answer;
+      const options = document.querySelectorAll('.quiz-option');
+      
+      options.forEach((option, index) => {
+        option.disabled = true;
+        if (index === correctIndex) {
+          option.style.backgroundColor = '#10B981';
+        } else if (index === selectedIndex && index !== correctIndex) {
+          option.style.backgroundColor = '#EF4444';
+        }
+      });
+      
+      if (selectedIndex === correctIndex) {
+        score++;
+        document.getElementById('quiz-score').textContent = `Score: ${score}`;
+      }
+    }
+  
+    document.getElementById('quiz-next').addEventListener('click', () => {
+      currentQuestion = (currentQuestion + 1) % quizQuestions.length;
+      loadQuestion();
+    });
+  
+    // Initialize quiz
+    document.addEventListener('DOMContentLoaded', () => {
+      loadQuestion();
+    });
   </script>
 </body>
 </html>

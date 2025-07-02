@@ -14,7 +14,7 @@ export async function checkAuth(redirectIfNotAuthenticated = true) {
   try {
     // Get user data
     const { data: userData, error: userError } = await supabase
-      .from('users')
+      .from('profiles')
       .select('*')
       .eq('id', user.id)
       .single();

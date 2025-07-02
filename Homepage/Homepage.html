@@ -39,6 +39,36 @@
       gap: 30px;
     }
 
+    nav ul li a {
+      position: relative;
+      padding: 0.5rem 0;
+      transition: all 0.3s ease;
+    }
+
+    nav ul li a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #38a169, #3182ce);
+      transition: width 0.3s ease;
+    }
+
+    nav ul li a:hover::after {
+      width: 100%;
+    }
+
+    nav ul li a.active {
+      color: #38a169;
+      font-weight: 500;
+    }
+
+    nav ul li a.active::after {
+      width: 100%;
+    }
+
     nav a {
       text-decoration: none;
       color: #333;
@@ -52,21 +82,6 @@
       color: #4C9444;
     }
 
-    nav a::after {
-      content: '';
-      position: absolute;
-      width: 0;
-      height: 2px;
-      bottom: -5px;
-      left: 0;
-      background-color: #4C9444;
-      transition: width 0.3s;
-    }
-
-    nav a:hover::after {
-      width: 100%;
-    }
-
     .login-btn {
       border: 2px solid #333;
       border-radius: 30px;
@@ -77,6 +92,14 @@
       transition: all 0.3s ease;
       position: relative;
       overflow: hidden;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      transform-origin: center;
+    }
+
+    .login-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }
 
     .login-btn::before {
@@ -532,21 +555,25 @@
   <header>
     <nav>
       <ul style="display: flex; gap: 30px; list-style-type: none; padding: 0;">
-        <li><a href="Homepage.html" class="hover:text-green-500 transition">Home</a></li>
-        <li><a href="#services" class="hover:text-green-500 transition">Services</a></li>
-        <li><a href="../Registration/Registration.html">Registration</a></li>
-        <li><a href="../Regulations/Regulations.html">Regulations</a></li>
-        <li><a href="../Maintenance/Maintenance.html">Maintenance</a></li>
+        <li><a href="/Homepage.html" class="active hover:text-green-500 transition">Home</a></li>
+        <li><a href="/Account/SignIn.html" class="hover:text-green-500 transition">Showcase</a></li>
+        <li><a href="/Account/SignIn.html" class="hover:text-green-500 transition">Registration</a></li>
+        <li><a href="/Account/SignIn.html" class="hover:text-green-500 transition">Regulations</a></li>
+        <li><a href="/Account/SignIn.html" class="hover:text-green-500 transition">Maintenance</a></li>
+        <li><a href="/Account/SignIn.html" class="hover:text-green-500 transition">Branch Locator</a></li>
+        <li><a href="/Account/SignIn.html" class="hover:text-green-500 transition">Traffic Alerts</a></li>
+        <li><a href="/Account/SignIn.html" class="hover:text-green-500 transition">Rider Forum</a></li>
+        <li><a href="/Account/SignIn.html" class="hover:text-green-500 transition">Safety Quiz</a></li>
       </ul>
     </nav>
   
-    <a href="../Account/SignIn.html" class="bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-600 transition">Sign In</a>
+    <a href="/Account/SignIn.html" class="login-btn" style="background: #38a169; color: white; padding: 0.5rem 1.5rem; border-radius: 0.5rem; text-decoration: none;">Sign In</a>
   </header>
 
   <section class="hero">
     <div class="hero-text">
       <h1>Ride Smarter,<br>Ride Safer.</h1>
-      <a href="../Account/Create Account.html">
+      <a href="/Account/SignIn.html">
         <button>Get Started</button>
       </a>
     </div>
@@ -578,7 +605,7 @@
       </div>
     </div>
   
-    <a href="../Account/Create Account.html">
+    <a href="/Account/SignIn.html">
       <button class="show-more-btn">Show More</button>
     </a>
   </div>
@@ -591,7 +618,7 @@
         <div class="feature-card-content">
           <h3>E-Bike Registration Guide</h3>
           <p>This guide provides a step-by-step process for registering your E-Bike at city hall, including required documents, fees, and important regulations to ensure a hassle-free registration experience.</p>
-          <a href="../Registration/Registration.html">Learn more</a>
+          <a href="/Account/SignIn.html">Learn more</a>
         </div>
       </div>
       <div class="feature-card">
@@ -600,16 +627,48 @@
           <h3>Safety and Traffic Guidelines</h3>
           <p>Learn the most important  regulations all drivers must know.
             All rules and regulations presented in this guide is created and managed by the Land Transportation Office (LTO) of the Philippines.</p>
-          <a href="../Regulations/Regulations.html">Learn more</a>
+          <a href="/Account/SignIn.html">Learn more</a>
         </div>
       </div>
       <div class="feature-card">
-        <img src="../Images/feature3.png" alt="Feature 3">
+        <img src="../Images/feature3.png" alt="">
         <div class="feature-card-content">
           <h3>E-Bike Maintenance Guide</h3>
           <p>Check all your essential vehicle components, including battery charging, tire checks, and also servicing. 
             Promote vehicle reliability and prevent breakdowns of your E-Bike.</p>
-          <a href="../Maintenance/Maintenance.html">Learn more</a>
+          <a href="/Account/SignIn.html">Learn more</a>
+        </div>
+      </div>
+      <div class="feature-card">
+        <img src="../Images/feature4.png" alt="Feature 4">
+        <div class="feature-card-content">
+          <h3>GPS Location of Branches</h3>
+          <p>Find nearby LTO branches and service centers with real-time location tracking and directions to help you with your e-bike needs.</p>
+          <a href="/Account/SignIn.html">Find Locations</a>
+        </div>
+      </div>
+      <div class="feature-card">
+        <img src="../Images/feature5.png" alt="Feature 5">
+        <div class="feature-card-content">
+          <h3>Safety Quiz Game</h3>
+          <p>Test your knowledge of e-bike safety rules and regulations through our interactive quiz game and earn badges for your achievements.</p>
+          <a href="/Account/SignIn.html">Play Now</a>
+        </div>
+      </div>
+      <div class="feature-card">
+        <img src="../Images/feature6.png" alt="Feature 6">
+        <div class="feature-card-content">
+          <h3>Live Traffic Alerts</h3>
+          <p>Get real-time updates on road conditions, traffic congestion, and suggested alternative routes for your e-bike journeys.</p>
+          <a href="/Account/SignIn.html">View Alerts</a>
+        </div>
+      </div>
+      <div class="feature-card">
+        <img src="../Images/feature7.png" alt="Feature 7">
+        <div class="feature-card-content">
+          <h3>Rider Forum</h3>
+          <p>Connect with fellow e-bike enthusiasts to share tips, routes, and experiences in our community discussion platform.</p>
+          <a href="/Account/SignIn.html">Join Discussion</a>
         </div>
       </div>
     </div>
@@ -619,7 +678,7 @@
     <div class="logo">
       <img src="../Images/logoo.png" alt="E-WAY Logo"><br>
     </div>
-    <p class="copyright">Copyright © 2025. All rights reserved.</p>
+    <p class="copyright">Copyright 2025. All rights reserved.</p>
   </footer>
 
   <div class="scroll-top" id="scrollTop">
