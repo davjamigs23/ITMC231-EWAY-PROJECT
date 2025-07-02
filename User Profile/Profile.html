@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile - E-WAY</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="../js/supabase-config.js"></script>
+  <style>
+    body {
+      background: linear-gradient(to right, #e7beb5, #c5efea);
+    }
+    .profile-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .btn-primary {
+      background-color: #0d9488;
+      transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+      background-color: #0f766e;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  <!-- Logo -->
+  <div class="fixed top-4 left-4 z-10">
+    <a href="../Homepage/HomepageWithAccount.html">
+      <img src="../Images/E-way Logo.png" alt="E-WAY Logo" class="max-w-[140px] h-auto">
+    </a>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container mx-auto px-4 py-20 max-w-4xl">
+    <div class="profile-card rounded-2xl shadow-xl overflow-hidden">
+      <!-- Profile Header -->
+      <div class="bg-gradient-to-r from-teal-600 to-teal-400 p-8 text-white">
+        <div class="flex flex-col md:flex-row items-center">
+          <div class="w-32 h-32 rounded-full bg-white p-1 mb-4 md:mb-0 md:mr-8">
+            <img src="../Images/User Logo.png" alt="Profile" class="w-full h-full rounded-full object-cover">
+          </div>
+          <div class="text-center md:text-left">
+            <h1 class="text-3xl font-bold" id="user-name">Loading...</h1>
+            <p class="text-teal-100" id="user-email">user@example.com</p>
+            <p class="text-teal-100 text-sm mt-1" id="user-role">Role: User</p>
+            <div id="admin-dashboard-link-container" class="mt-2"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile Content -->
+      <div class="p-8">
+        <!-- Personal Information -->
+        <div class="mb-8">
+          <h2 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Personal Information</h2>
+          <form id="profile-form" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                <input type="text" id="first-name" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                <input type="text" id="last-name" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <input type="email" id="email" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500" disabled>
+            </div>
+            <div class="pt-2">
+              <button type="submit" class="btn-primary text-white px-6 py-2 rounded-lg font-medium">
+                Update Profile
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Change Password -->
+        <div>
+          <h2 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Change Password</h2>
+          <form id="password-form" class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
+              <input type="password" id="current-password" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+              <input type="password" id="new-password" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
+              <input type="password" id="confirm-password" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+            </div>
+            <div class="pt-2">
+              <button type="submit" class="btn-primary text-white px-6 py-2 rounded-lg font-medium">
+                Change Password
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { supabase } from '../js/supabase-config.js';
+    import { checkAuth, signOut } from '../js/auth.js';
+
+    // Check if user is logged in
+    document.addEventListener('DOMContentLoaded', async () => {
+      const user = await checkAuth();
+      if (!user) {
+        window.location.href = '../Account/SignIn.html';
+        return;
+      }
+
+      // Load user data
+      loadUserData(user);
+      setupEventListeners();
+    });
+
+    // Load user data into form
+    function loadUserData(user) {
+      document.getElementById('first-name').value = user.user_metadata?.first_name || '';
+      document.getElementById('last-name').value = user.user_metadata?.last_name || '';
+      document.getElementById('email').value = user.email || '';
+      document.getElementById('user-name').textContent = 
+        `${user.user_metadata?.first_name || ''} ${user.user_metadata?.last_name || 'User'}`.trim() || 'User';
+      document.getElementById('user-email').textContent = user.email || '';
+      
+      const userRole = user.user_metadata?.role || 'User';
+      document.getElementById('user-role').textContent = `Role: ${userRole}`;
+
+      if (userRole === 'admin') {
+        const dashboardLink = `<a href="../Admin/admin-dashboard.html" class="text-white hover:text-green-300 transition font-medium">Admin Dashboard</a>`;
+        document.getElementById('admin-dashboard-link-container').innerHTML = dashboardLink;
+      }
+    }
+
+    // Setup form event listeners
+    function setupEventListeners() {
+      // Profile form submission
+      document.getElementById('profile-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const firstName = document.getElementById('first-name').value.trim();
+        const lastName = document.getElementById('last-name').value.trim();
+        
+        try {
+          const { error } = await supabase.auth.updateUser({
+            data: { first_name: firstName, last_name: lastName }
+          });
+          
+          if (error) throw error;
+          
+          // Update displayed name
+          document.getElementById('user-name').textContent = `${firstName} ${lastName}`.trim();
+          
+          alert('Profile updated successfully!');
+        } catch (error) {
+          console.error('Error updating profile:', error);
+          alert('Failed to update profile. Please try again.');
+        }
+      });
+
+      // Password form submission
+      document.getElementById('password-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const currentPassword = document.getElementById('current-password').value;
+        const newPassword = document.getElementById('new-password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+        
+        if (newPassword !== confirmPassword) {
+          alert('New passwords do not match!');
+          return;
+        }
+        
+        try {
+          // Note: Supabase requires the user to be recently signed in for sensitive operations
+          // In a real app, you might need to re-authenticate the user first
+          const { error } = await supabase.auth.updateUser({
+            password: newPassword
+          });
+          
+          if (error) throw error;
+          
+          alert('Password updated successfully!');
+          document.getElementById('password-form').reset();
+        } catch (error) {
+          console.error('Error updating password:', error);
+          alert('Failed to update password. Please try again.');
+        }
+      });
+    }
+  </script>
+</body>
+</html>

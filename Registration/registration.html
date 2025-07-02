@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-Bike Registration Guide | Simple Steps to Register Your E-Bike</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <style>
+    * {
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      font-weight: lighter;
+      background-color: #ffffff;
+      color: #113c23;
+      line-height: 1.6;
+    }
+
+    /* Updated Header Styles */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 25px 60px;
+      background: linear-gradient(to right, #e7beb5, #c5efea);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    nav {
+      display: flex;
+      gap: 30px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      font-size: 17px;
+      transition: color 0.3s;
+      position: relative;
+    }
+
+    nav a:hover {
+      color: #4C9444;
+    }
+
+    nav a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -5px;
+      left: 0;
+      background-color: #4C9444;
+      transition: width 0.3s;
+    }
+
+    nav a:hover::after {
+      width: 100%;
+    }
+
+    .user-profile {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .user-profile img {
+      height: 50px;
+      width: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      cursor: pointer;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s;
+    }
+
+    .user-profile img:hover {
+      transform: scale(1.1);
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: 60px;
+      right: 0;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      display: none;
+      flex-direction: column;
+      min-width: 150px;
+      z-index: 1000;
+      overflow: hidden;
+    }
+
+    .dropdown-menu a {
+      padding: 12px 16px;
+      text-decoration: none;
+      color: #333;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .dropdown-menu a:hover {
+      background: #4C9444;
+      color: white;
+    }
+
+    .content-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 40px;
+      position: relative;
+    }
+
+    /* Hero Section */
+    .hero {
+      display: flex;
+      align-items: center;
+      background-color: #f8fafc;
+      padding: 3rem;
+      border-radius: 12px;
+      margin-bottom: 3rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+    }
+
+    .hero:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .hero-content {
+      flex: 1;
+      padding-right: 2rem;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      color: #005c2e;
+      margin-bottom: 1.5rem;
+      line-height: 1.3;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: #444;
+      margin-bottom: 2rem;
+    }
+
+    .hero-image {
+      flex: 1;
+      max-width: 450px;
+      border-radius: 8px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s;
+    }
+
+    .hero-image:hover {
+      transform: scale(1.02);
+    }
+
+    .cta-button {
+      display: inline-block;
+      background-color: #c03200;
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 30px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      margin-right: 2rem;
+      font-size: 1.1rem;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 3px 4px 0 #8a2300;
+    }
+
+    .cta-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: 0.5s;
+    }
+
+    .cta-button:hover::before {
+      left: 100%;
+    }
+
+    .cta-button:hover {
+      background-color: #a82b00;
+      transform: translateY(-2px);
+      box-shadow: 4px 6px 0 #8a2300;
+    }
+
+    .button-container {
+      display: flex;
+      gap: 2rem;
+    }
+
+    /* Search Section */
+    .search-section {
+      background-color: #f8fafc;
+      padding: 2rem;
+      border-radius: 8px;
+      margin-bottom: 3rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+    }
+
+    .search-section:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-section h2 {
+      font-size: 1.8rem;
+      color: #005c2e;
+      margin-bottom: 1.5rem;
+    }
+
+    .search-container {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .search-input {
+      flex: 1;
+      padding: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 1.1rem;
+      transition: all 0.3s;
+    }
+
+    .search-input:focus {
+      border-color: #4C9444;
+      box-shadow: 0 0 0 3px rgba(76, 148, 68, 0.2);
+      outline: none;
+    }
+
+    .search-button {
+      background-color: #4C9444;
+      color: white;
+      border: none;
+      padding: 0 2rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 1.1rem;
+      box-shadow: 3px 4px 0 #3a7a34;
+    }
+
+    .search-button:hover {
+      background-color: #3a7a34;
+      transform: translateY(-2px);
+      box-shadow: 4px 6px 0 #2a5a25;
+    }
+
+    .user-details-section {
+      display: none;
+      background-color: white;
+      padding: 2rem;
+      border-radius: 8px;
+      margin-top: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 0.5s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .user-details-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    .detail-item {
+      margin-bottom: 1rem;
+    }
+
+    .detail-label {
+      font-weight: 600;
+      color: #005c2e;
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+    }
+
+    .detail-value {
+      padding: 0.8rem;
+      background-color: #f8f8f8;
+      border-radius: 4px;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+
+    .detail-value:hover {
+      background-color: #e8f5e9;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 2rem;
+      color: #666;
+      display: none;
+      font-size: 1.1rem;
+      animation: fadeIn 0.5s;
+    }
+
+    /* Registration Steps */
+    .registration-steps {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    /* Card Styles */
+    .card {
+      background-color: white;
+      padding: 2.5rem;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      position: relative;
+      height: 100%;
+      border-top: 5px solid #4C9444;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .card h3 {
+      font-size: 1.6rem;
+      color: #005c2e;
+      margin-bottom: 2rem;
+      text-align: center;
+      position: relative;
+      padding-bottom: 10px;
+    }
+
+    .card h3::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: #4C9444;
+    }
+
+    .card-number {
+      position: absolute;
+      top: -20px;
+      left: -20px;
+      background-color: #ff0000;
+      color: white;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      font-weight: bold;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s;
+    }
+
+    .card:hover .card-number {
+      transform: scale(1.1);
+    }
+
+    .card-image {
+      width: 100%;
+      max-width: 300px;
+      height: auto;
+      display: block;
+      margin: 2rem auto;
+      border-radius: 8px;
+      border: 1px solid #eee;
+      transition: all 0.3s;
+    }
+
+    .card-image:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .card ul,
+    .card ol {
+      padding-left: 1.5rem;
+    }
+
+    .card li {
+      margin-bottom: 1rem;
+      padding-left: 0.5rem;
+      font-size: 1.1rem;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .card li::before {
+      content: '';
+      position: absolute;
+      left: -10px;
+      top: 10px;
+      width: 6px;
+      height: 6px;
+      background: #4C9444;
+      border-radius: 50%;
+    }
+
+    .card li:hover {
+      transform: translateX(5px);
+    }
+
+    .card li strong {
+      color: #005c2e;
+    }
+
+    .highlight {
+      background-color: #c03200;
+      color: white;
+      padding: 1rem;
+      font-size: 1.1rem;
+      border-radius: 30px;
+      text-align: center;
+      margin-top: 2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      box-shadow: 3px 4px 0 #8a2300;
+    }
+
+    .highlight:hover {
+      background-color: #a82b00;
+      transform: translateY(-3px);
+      box-shadow: 4px 6px 0 #8a2300;
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      overflow: auto;
+      animation: fadeIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-content {
+      margin: auto;
+      display: block;
+      width: 80%;
+      max-width: 800px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #fff;
+      border-radius: 12px;
+      padding: 40px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      border-top: 5px solid #4C9444;
+    }
+
+    .close {
+      position: absolute;
+      top: 15px;
+      right: 35px;
+      color: #888;
+      font-size: 40px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .close:hover {
+      color: #f44336;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2.5rem;
+      background: linear-gradient(to right, #113c23, #0a5b30);
+      color: white;
+      font-size: 1rem;
+      margin-top: 3rem;
+    }
+
+    .scroll-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #4C9444;
+      color: white;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: all 0.3s;
+      z-index: 99;
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .scroll-top.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .scroll-top:hover {
+      background: #0a5b30;
+      transform: translateY(-5px);
+    }
+
+    @media (max-width: 1024px) {
+      .registration-steps {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        padding: 15px;
+      }
+      
+      nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .content-wrapper {
+        padding: 20px;
+      }
+
+      .hero {
+        flex-direction: column;
+        padding: 2rem;
+        text-align: center;
+        gap: 2rem;
+      }
+
+      .hero-content {
+        padding-right: 0;
+      }
+
+      .hero-image {
+        max-width: 100%;
+      }
+
+      .button-container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .cta-button {
+        margin-right: 0;
+        width: 100%;
+        text-align: center;
+      }
+
+      .card-number {
+        width: 40px;
+        height: 40px;
+        font-size: 1.4rem;
+        top: -15px;
+        left: -15px;
+      }
+
+      .modal-content {
+        max-width: 95%;
+        max-height: 95%;
+        padding: 20px;
+      }
+
+      .user-details-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="/Homepage/HomepageWithAccount.html">Home</a>
+      <a href="/Showcase/ShowcaseWithAccount.html">Showcase</a>
+      <a href="/Registration/registration.html">Registration</a>
+      <a href="/Regulations/regulations.html">Regulations</a>
+      <a href="/Maintenance/Maintenance_Main.html">Maintenance</a>
+    </nav>
+  
+    <div class="user-profile">
+      <img src="/Images/User Logo.png" alt="User Profile" onclick="toggleDropdown()" />
+      <div id="dropdown-menu" class="dropdown-menu">
+        <a href="/User%20Profile/Profile.html">Profile Settings</a>
+        <a href="/User Profile/Contact.html">Contact</a>
+        <a href="/Homepage/Homepage.html">Logout</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="content-wrapper">
+    <section class="hero">
+      <div class="hero-content">
+        <h1>E-Bike Registration Guide</h1>
+        <p>This guide provides a step-by-step process for registering your e-bike or city hall, including required
+          documents, fees, and important regulations to ensure a hassle-free registration experience.</p>
+        <div class="button-container">
+          <a class="cta-button" href="">See Full Registration Guide</a>
+          <a href="/Registration/User Registration.html" class="cta-button" style="background-color: #4C9444; box-shadow: 3px 4px 0 #3a7a34;">Register Your E-Bike</a>
+        </div>
+      </div>
+      <img src="/Images/Ebike Pic Mandatory.jpg" alt="E-bike registration illustration" class="hero-image">
+    </section>
+
+    <section class="search-section">
+      <h2>Search Your E-Bike Registration</h2>
+      <div class="search-container">
+        <input type="text" id="searchInput" class="search-input" placeholder="Enter registration ID, name, or e-bike serial number">
+        <button class="search-button" onclick="searchUserDetails()">Search</button>
+      </div>
+      <div id="noResults" class="no-results">
+        <p>No registration found matching your search.</p>
+      </div>
+      <div id="userDetails" class="user-details-section"></div>
+    </section>
+
+    <section class="registration-steps">
+      <div class="card">
+        <div class="card-number">1</div>
+        <h3>Requirements</h3>
+        <img src="/Images/ID clipart.jpg" alt="Required documents for e-bike registration" class="card-image">
+        <ul>
+          <li>Valid ID (government-issued)</li>
+          <li>Proof of Purchase: Receipt, Sales Invoice, or Deed of Sale</li>
+          <li>E-bike Serial Number</li>
+          <li>Recent Photos of the E-bike</li>
+          <li>Road Safety Seminar Certificate (if required)</li>
+        </ul>
+        <div class="highlight" onclick="openModal('/Images/Spes Brand.jpg')">Brand-Specific Requirements</div>
+      </div>
+
+      <div class="card">
+        <div class="card-number">2</div>
+        <h3>Steps to Register</h3>
+        <img src="/Images/City Hall.jpg" alt="City hall registration process" class="card-image">
+        <ol>
+          <li><strong>Visit City Hall:</strong> Go to the designated registration office.</li>
+          <li><strong>Submit All Requirements:</strong> Provide the required documents for verification.</li>
+          <li><strong>Receive Processing Form:</strong> Once your documents are checked, you will be given a
+            registration form to fill out.</li>
+          <li><strong>Pay the Registration Fee:</strong> Proceed to the payment counter and pay.</li>
+          <li><strong>Return to ENRO:</strong> After payment, go back to the ENRO to receive your e-bike number.</li>
+        </ol>
+        <div class="highlight" onclick="openModal('/Images/Regis Fees.jpg')">Registration Fees</div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Image Modal -->
+  <div id="imageModal" class="modal">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <img class="modal-content" id="modalImage">
+  </div>
+
+  <div class="scroll-top" id="scrollTop">
+    <i class="fas fa-arrow-up"></i>
+  </div>
+
+  <script>
+    function toggleDropdown() {
+      const menu = document.getElementById("dropdown-menu");
+      menu.style.display = (menu.style.display === "flex") ? "none" : "flex";
+    }
+
+    // Close dropdown if clicked outside
+    window.addEventListener("click", function (e) {
+      const dropdown = document.getElementById("dropdown-menu");
+      const profile = document.querySelector(".user-profile img");
+      if (!profile.contains(e.target)) {
+        dropdown.style.display = "none";
+      }
+    });
+
+    function searchUserDetails() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const resultsContainer = document.getElementById('userDetails');
+      const noResults = document.getElementById('noResults');
+      
+      // Clear previous results
+      resultsContainer.innerHTML = '';
+      resultsContainer.style.display = 'none';
+      noResults.style.display = 'none';
+
+      if (!searchTerm) {
+        return; // Don't search if empty
+      }
+
+      // In a real implementation, you would make an API call here
+      // For now, we'll just show no results
+      noResults.style.display = 'block';
+    }
+
+    // Modal functionality
+    function openModal(imageSrc) {
+      const modal = document.getElementById("imageModal");
+      const modalImg = document.getElementById("modalImage");
+      
+      modal.style.display = "block";
+      modalImg.src = imageSrc;
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeModal() {
+      document.getElementById("imageModal").style.display = "none";
+      document.body.style.overflow = "auto";
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      const modal = document.getElementById("imageModal");
+      if (event.target == modal) {
+        closeModal();
+      }
+    };
+
+    // Close modal with ESC key
+    document.onkeydown = function(evt) {
+      evt = evt || window.event;
+      if (evt.key === "Escape") {
+        closeModal();
+      }
+    };
+
+    // Scroll to top button
+    const scrollTopBtn = document.getElementById('scrollTop');
+    
+    window.addEventListener('scroll', () => {
+      if (window.pageYOffset > 300) {
+        scrollTopBtn.classList.add('active');
+      } else {
+        scrollTopBtn.classList.remove('active');
+      }
+    });
+    
+    scrollTopBtn.addEventListener('click', () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+  </script>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</body>
+</html>

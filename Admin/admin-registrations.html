@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Requests - Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #0f5132;
+            --secondary-color: #e9c5c0;
+            --accent-color: #c2410c;
+            --light-bg: #f8f9fa;
+            --dark-text: #1e293b;
+            --light-text: #f8fafc;
+            --border-color: #e2e8f0;
+            --success-color: #16a34a;
+            --warning-color: #eab308;
+            --danger-color: #dc2626;
+            --info-color: #0ea5e9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(to bottom, var(--secondary-color), #f3e8e6);
+            padding: 20px 0;
+            height: 100vh;
+            position: fixed;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-header h2 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .menu-label {
+            color: var(--primary-color);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 10px 20px;
+        }
+
+        .menu-item {
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            color: var(--dark-text);
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .menu-item i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .user-role {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .filter-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: flex-end;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        /* Table Styles */
+        .table-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-bottom: 30px;
+            overflow-x: auto;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .table-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0c4128;
+        }
+
+        .btn-secondary {
+            background-color: #e2e8f0;
+            color: var(--dark-text);
+        }
+
+        .btn-secondary:hover {
+            background-color: #cbd5e1;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            background-color: #f8fafc;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #64748b;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        tbody td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .status.active {
+            background-color: rgba(22, 163, 74, 0.1);
+            color: var(--success-color);
+        }
+
+        .status.pending {
+            background-color: rgba(234, 179, 8, 0.1);
+            color: var(--warning-color);
+        }
+
+        .status.rejected {
+            background-color: rgba(220, 38, 38, 0.1);
+            color: var(--danger-color);
+        }
+
+        .action-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8fafc;
+            color: #64748b;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-right: 5px;
+        }
+
+        .action-btn:hover {
+            background-color: #e2e8f0;
+        }
+
+        .action-btn.view:hover {
+            color: var(--info-color);
+        }
+
+        .action-btn.approve:hover {
+            color: var(--success-color);
+        }
+
+        .action-btn.reject:hover {
+            color: var(--danger-color);
+        }
+
+        .action-btn.edit:hover {
+            color: var(--primary-color);
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination-item {
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            margin: 0 5px;
+            background-color: white;
+            color: var(--dark-text);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid var(--border-color);
+            text-decoration: none;
+        }
+
+        .pagination-item.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .pagination-item:hover:not(.active) {
+            background-color: #f8fafc;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+                padding: 20px 0;
+            }
+
+            .sidebar-header h2, .menu-label, .menu-item span {
+                display: none;
+            }
+
+            .menu-item {
+                justify-content: center;
+                padding: 15px 0;
+            }
+
+            .menu-item i {
+                margin-right: 0;
+                font-size: 1.2rem;
+            }
+
+            .main-content {
+                margin-left: 70px;
+            }
+
+            .filter-form {
+                flex-direction: column;
+            }
+
+            .form-group {
+                width: 100%;
+            }
+        }
+        
+        /* No results message */
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #64748b;
+            font-style: italic;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>Admin Panel</h2>
+            </div>
+            <div class="sidebar-menu">
+                <p class="menu-label">Main</p>
+                <a href="admin-dashboard.html" class="menu-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="admin-registrations.html" class="menu-item active">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Registration Requests</span>
+                </a>
+                <a href="admin-content.html" class="menu-item">
+                    <i class="fas fa-edit"></i>
+                    <span>Content Management</span>
+                </a>
+                <p class="menu-label">System</p>
+                <a href="admin-logout.html" class="menu-item">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h1>Registration Requests</h1>
+                <div class="user-profile">
+                    <img src="/Images/Admin logo.png" alt="Admin Profile">
+                    <div class="user-info">
+                        <span class="user-name">Admin User</span>
+                        <span class="user-role">Administrator</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="filter-section">
+                <form class="filter-form" id="searchForm">
+                    <div class="form-group">
+                        <label for="status">Status</label>
+                        <select id="status" class="form-control">
+                            <option value="">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="date_from">Date From</label>
+                        <input type="date" id="date_from" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="date_to">Date To</label>
+                        <input type="date" id="date_to" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="search">Search</label>
+                        <input type="text" id="search" class="form-control" placeholder="Search by ID, name, or model...">
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Filter
+                    </button>
+                </form>
+            </div>
+
+            <!-- Registration Requests Table -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3 class="table-title">Registration Requests</h3>
+                    <div class="table-actions">
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                </div>
+                <table id="registrationsTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User</th>
+                            <th>E-Bike Model</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Table rows will be dynamically populated -->
+                    </tbody>
+                </table>
+                <div id="noResults" class="no-results">No matching records found</div>
+
+                <!-- Pagination -->
+                <div class="pagination">
+                    <a href="#" class="pagination-item">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                    <a href="#" class="pagination-item active">1</a>
+                    <a href="#" class="pagination-item">2</a>
+                    <a href="#" class="pagination-item">3</a>
+                    <a href="#" class="pagination-item">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuItems = document.querySelectorAll('.menu-item');
+            const searchForm = document.getElementById('searchForm');
+            const searchInput = document.getElementById('search');
+            const statusFilter = document.getElementById('status');
+            const dateFromFilter = document.getElementById('date_from');
+            const dateToFilter = document.getElementById('date_to');
+            const tableBody = document.getElementById('tableBody');
+            const noResultsMessage = document.getElementById('noResults');
+            
+            // Menu item active state
+            menuItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    menuItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Search and filter functionality
+            function filterTable() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const statusValue = statusFilter.value;
+                const dateFromValue = dateFromFilter.value;
+                const dateToValue = dateToFilter.value;
+                
+                // In a real application, you would fetch data from an API here
+                // For now, we'll just show the no results message
+                noResultsMessage.style.display = 'block';
+                tableBody.innerHTML = '';
+            }
+            
+            // Attach event listeners to action buttons in rows
+            function attachRowEventListeners() {
+                const viewButtons = document.querySelectorAll('.action-btn.view');
+                const approveButtons = document.querySelectorAll('.action-btn.approve');
+                const rejectButtons = document.querySelectorAll('.action-btn.reject');
+                const editButtons = document.querySelectorAll('.action-btn.edit');
+                
+                viewButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const row = this.closest('tr');
+                        const id = row.cells[0].textContent;
+                        alert(`Viewing registration details for ${id}`);
+                    });
+                });
+                
+                approveButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const row = this.closest('tr');
+                        const id = row.cells[0].textContent;
+                        if (confirm(`Are you sure you want to approve registration ${id}?`)) {
+                            const statusCell = row.cells[4];
+                            statusCell.innerHTML = '<span class="status active">Approved</span>';
+                            // Remove approve and reject buttons
+                            const actionCell = row.cells[5];
+                            actionCell.innerHTML = `
+                                <button class="action-btn view">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            `;
+                            alert(`Registration ${id} approved!`);
+                            // Reattach event listeners
+                            attachRowEventListeners();
+                        }
+                    });
+                });
+                
+                rejectButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const row = this.closest('tr');
+                        const id = row.cells[0].textContent;
+                        if (confirm(`Are you sure you want to reject registration ${id}?`)) {
+                            const statusCell = row.cells[4];
+                            statusCell.innerHTML = '<span class="status rejected">Rejected</span>';
+                            // Remove approve and reject buttons
+                            const actionCell = row.cells[5];
+                            actionCell.innerHTML = `
+                                <button class="action-btn view">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            `;
+                            alert(`Registration ${id} rejected!`);
+                            // Reattach event listeners
+                            attachRowEventListeners();
+                        }
+                    });
+                });
+                
+                editButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const row = this.closest('tr');
+                        const id = row.cells[0].textContent;
+                        alert(`Editing registration ${id}`);
+                    });
+                });
+            }
+            
+            // Initial attachment of event listeners
+            attachRowEventListeners();
+            
+            // Form submission handler
+            searchForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                filterTable();
+            });
+            
+            // Real-time search as user types
+            searchInput.addEventListener('input', function() {
+                filterTable();
+            });
+            
+            // Filter when status or date changes
+            statusFilter.addEventListener('change', filterTable);
+            dateFromFilter.addEventListener('change', filterTable);
+            dateToFilter.addEventListener('change', filterTable);
+            
+            // Initialize with empty table
+            filterTable();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-WAY Create Account</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background-color: #ffffff;
+      color: #113c23;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(to right, #e7beb5, #c5efea);
+    }
+
+    .error-message {
+      color: #ef4444;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+
+    .role-selector {
+      display: flex;
+      border-radius: 30px;
+      overflow: hidden;
+      border: 1px solid #d1d5db;
+      background-color: #f3f4f6;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .role-option {
+      flex: 1;
+      position: relative;
+    }
+
+    .role-option input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .role-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      color: #6b7280;
+    }
+
+    .role-option input:checked + .role-label {
+      background: linear-gradient(to right, #10b981, #3b82f6);
+      color: white;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .role-option:first-child .role-label {
+      border-top-left-radius: 30px;
+      border-bottom-left-radius: 30px;
+    }
+
+    .role-option:last-child .role-label {
+      border-top-right-radius: 30px;
+      border-bottom-right-radius: 30px;
+    }
+
+    .btn-gradient {
+      background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+      background-size: 200% auto;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border: none;
+      color: white;
+      font-weight: 600;
+      padding: 0.75rem;
+      border-radius: 30px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-gradient::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: 0.5s;
+    }
+
+    .btn-gradient:hover::before {
+      left: 100%;
+    }
+
+    .btn-gradient:hover {
+      background-position: right center;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-gradient:active {
+      transform: translateY(0);
+    }
+
+    .input-field {
+      width: 100%;
+      border: 1px solid #d1d5db;
+      padding: 0.75rem 1rem;
+      border-radius: 30px;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: #10b981;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    }
+
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+    }
+
+    .checkbox-container input[type="checkbox"] {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid #d1d5db;
+      border-radius: 4px;
+      margin-right: 8px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+
+    .checkbox-container input[type="checkbox"]:checked {
+      background-color: #10b981;
+      border-color: #10b981;
+    }
+
+    .checkbox-container input[type="checkbox"]:checked::after {
+      content: '✓';
+      position: absolute;
+      color: white;
+      font-size: 12px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .link-hover {
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .link-hover::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -2px;
+      left: 0;
+      background-color: #10b981;
+      transition: width 0.3s;
+    }
+
+    .link-hover:hover::after {
+      width: 100%;
+    }
+
+    .logo-container {
+      transition: transform 0.3s ease;
+    }
+
+    .logo-container:hover {
+      transform: scale(1.05);
+    }
+
+    .main-container {
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      border-radius: 20px;
+      overflow: hidden;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .illustration {
+      transition: transform 0.5s ease;
+    }
+
+    .illustration:hover {
+      transform: scale(1.03);
+    }
+
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      }
+      70% {
+        box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Logo -->
+  <div class="fixed top-4 left-4 z-10 logo-container">
+        <a href="../Homepage/Homepage.html">
+    </a>
+  </div>
+
+  <!-- Main Container -->
+  <main class="flex w-full max-w-6xl main-container bg-white h-[600px]">
+
+    <!-- Illustration Side -->
+    <aside class="w-1/2 bg-green-50 flex flex-col items-center justify-center p-12">
+            <img src="../Images/Sign In and up Pic.png" alt="E-WAY platform illustration" class="object-contain w-full h-full p-8 illustration">
+    </aside>
+
+    <!-- Form Side -->
+    <section class="w-1/2 bg-white p-12 flex flex-col justify-center">
+      <h2 class="text-3xl font-bold text-green-800 mb-6">Create Account</h2>
+
+      <form id="createAccountForm">
+        <!-- Enhanced Role Selector -->
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Account Type:</label>
+          <div class="role-selector">
+            <label class="role-option">
+              <input type="radio" name="role" value="user" checked>
+              <span class="role-label">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                </svg>
+                User
+              </span>
+            </label>
+            <label class="role-option">
+              <input type="radio" name="role" value="admin">
+              <span class="role-label">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+                </svg>
+                Admin
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Form Fields -->
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+            <input type="text" id="fullName" placeholder="Your full name" required
+                   class="input-field">
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+            <input type="email" id="email" placeholder="your@email.com" required
+                   class="input-field">
+            <div id="emailError" class="error-message hidden">Please enter a valid email address</div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <input type="password" id="password" placeholder="••••••••" required minlength="8"
+                   class="input-field">
+          </div>
+
+          <div id="verificationCodeContainer" style="display:none;">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Verification Code</label>
+            <input type="text" id="code" placeholder="Enter admin code" class="input-field">
+            <div id="codeError" class="error-message hidden">Invalid verification code.</div>
+          </div>
+
+          <div class="flex items-center">
+            <div class="checkbox-container">
+              <input type="checkbox" id="terms" required>
+              <label for="terms" class="text-sm text-gray-600">
+                I agree with <a href="../Regulations/Privacy Policy.pdf" class="text-green-600 link-hover">Terms</a> and <a href="../Regulations/Privacy Policy.pdf" class="text-green-600 link-hover">Privacy Policy</a>
+              </label>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Primary Action Button -->
+        <button type="submit"
+                class="w-full btn-gradient text-white py-2.5 rounded-md mt-4 font-medium tracking-wide pulse">
+          Create Account
+        </button>
+
+        <!-- "Already have an account?" Text Link -->
+        <p class="mt-4 text-sm text-center text-gray-600">
+          Already have an account?
+                    <a href="SignIn.html" class="text-green-600 font-medium link-hover">Sign In</a>
+        </p>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    // IMPORTANT: Replace with your Supabase project URL and anon key
+    const SUPABASE_URL = 'https://lqytdmbpaknugrrjoylh.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxxeXRkbWJwYWtudWdycmpveWxoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEzODM3MTQsImV4cCI6MjA2Njk1OTcxNH0.B9AndZdM-_2_ojsbqSC-p7hboIN0XKsrs8TBEnDO3lY';
+
+    const { createClient } = supabase;
+    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Show/hide verification code input based on role selection
+    const roleInputs = document.querySelectorAll('input[name="role"]');
+    const verificationCodeContainer = document.getElementById('verificationCodeContainer');
+    roleInputs.forEach(input => {
+      input.addEventListener('change', function() {
+        if (this.value === 'admin') {
+          verificationCodeContainer.style.display = '';
+        } else {
+          verificationCodeContainer.style.display = 'none';
+          document.getElementById('code').value = '';
+          document.getElementById('codeError').classList.add('hidden');
+        }
+      });
+    });
+
+        document.getElementById('createAccountForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const fullName = document.getElementById('fullName').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const role = document.querySelector('input[name="role"]:checked').value;
+      const code = document.getElementById('code').value;
+      const codeError = document.getElementById('codeError');
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      
+      // UI feedback
+      submitBtn.innerHTML = 'Creating Account...';
+      submitBtn.disabled = true;
+
+      // Clear previous errors
+      document.getElementById('emailError').classList.add('hidden');
+      codeError.classList.add('hidden');
+
+      // Admin code validation
+      if (role === 'admin' && code !== 'EWAY2025') {
+        codeError.textContent = 'Invalid verification code.';
+        codeError.classList.remove('hidden');
+        // Restore button state
+        submitBtn.innerHTML = 'Create Account';
+        submitBtn.disabled = false;
+        return;
+      }
+      
+      try {
+        const { data, error } = await supabaseClient.auth.signUp({
+          email: email,
+          password: password,
+          options: {
+            data: {
+              full_name: fullName,
+              role: role
+            }
+          }
+        });
+
+        if (error) {
+          throw error;
+        }
+
+        // Handle success
+        alert('Account created successfully! Please check your email to verify your account.');
+        window.location.href = 'SignIn.html';
+
+      } catch (error) {
+        // Handle error
+        console.error('Full error object:', error);
+        alert(`Error creating account: ${error.message}`);
+        
+        // Restore button state
+        submitBtn.innerHTML = 'Create Account';
+        submitBtn.disabled = false;
+      }
+    });
+
+    // Add hover effect to form inputs
+    document.querySelectorAll('.input-field').forEach(input => {
+      input.addEventListener('mouseenter', () => {
+        input.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+      });
+      input.addEventListener('mouseleave', () => {
+        input.style.boxShadow = '0 1px 2px rgba(0,0,0,0.05)';
+      });
+    });
+  </script>
+</body>
+</html>
