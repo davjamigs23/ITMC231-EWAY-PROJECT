@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>E-Way | Safety Quiz</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <style>
     * {
       margin: 0;
@@ -172,21 +173,93 @@
         padding: 25px;
       }
     }
+
+    /* User Profile Dropdown */
+    .user-profile {
+      position: relative;
+    }
+    
+    .user-profile img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid white;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.1);
+    }
+    
+    .user-profile img:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.1);
+    }
+    
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      min-width: 180px;
+      z-index: 1000;
+      overflow: hidden;
+      transform: translateY(10px);
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+    
+    .dropdown-menu.show {
+      display: flex;
+      flex-direction: column;
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    .dropdown-menu a {
+      padding: 12px 20px;
+      text-decoration: none;
+      color: #333;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .dropdown-menu a i {
+      width: 20px;
+      text-align: center;
+    }
+    
+    .dropdown-menu a:hover {
+      background: #4C9444;
+      color: white;
+    }
   </style>
 </head>
 <body>
   <header>
     <nav>
       <a href="../Homepage/HomepageWithAccount.html">Home</a>
-      <a href="../Showcase/ShowcaseWithAccount.html">Showcase</a>
-      <a href="../Registration/registration.html">Registration</a>
       <a href="../Regulations/regulations.html">Regulations</a>
       <a href="../Maintenance/Maintenance_Main.html">Maintenance</a>
+      <a href="../Showcase/ShowcaseWithAccount.html">Showcase</a>
+      <a href="../Registration/registration.html">Registration</a>
       <a href="../Features/Locations.html">Branch Locator</a>
       <a href="../Features/Traffic.html">Traffic Alerts</a>
       <a href="../Features/Forum.html">Rider Forum</a>
-      <a href="../Features/Quiz.html" class="active">Safety Quiz</a>
+      <a href="Quiz.html" class="active">Safety Quiz</a>
     </nav>
+    
+    <div class="user-profile">
+      <img src="../Images/User Logo.png" alt="User Profile" onclick="toggleDropdown()" />
+      <div id="dropdown-menu" class="dropdown-menu">
+        <a href="../User Profile/Profile.html"><i class="fas fa-user"></i> Profile Settings</a>
+        <a href="../User Profile/Contact.html"><i class="fas fa-envelope"></i> Contact</a>
+        <a href="../Homepage/Homepage.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </div>
+    </div>
   </header>
 
   <div class="quiz-container">
@@ -206,6 +279,21 @@
   </div>
 
   <script>
+    // User profile dropdown toggle
+    function toggleDropdown() {
+      const dropdown = document.getElementById('dropdown-menu');
+      dropdown.classList.toggle('show');
+    }
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+      if (!event.target.closest('.user-profile')) {
+        const dropdown = document.getElementById('dropdown-menu');
+        dropdown.classList.remove('show');
+      }
+    });
+    
+    // Original quiz JavaScript below
     const questions = [
       {
         question: "What is the most important piece of safety gear for motorcyclists?",
