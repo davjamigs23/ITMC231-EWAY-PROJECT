@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-Way | Safety Quiz</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background-color: #ffffff;
+      color: #113c23;
+      line-height: 1.6;
+    }
+
+    /* Header matching Maintenance_Main.html */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 25px 60px;
+      background: linear-gradient(to right, #e7beb5, #c5efea);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    nav {
+      display: flex;
+      gap: 30px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 400;
+      font-size: 17px;
+      transition: color 0.3s;
+      position: relative;
+    }
+
+    nav a:hover {
+      color: #4C9444;
+    }
+
+    nav a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -5px;
+      left: 0;
+      background-color: #4C9444;
+      transition: width 0.3s;
+    }
+
+    nav a:hover::after {
+      width: 100%;
+    }
+
+    .active {
+      color: #4C9444;
+      font-weight: 600;
+    }
+
+    /* Quiz container styling */
+    .quiz-container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 40px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #093820;
+      font-size: 28px;
+    }
+
+    /* Question styling */
+    .question {
+      font-size: 18px;
+      margin-bottom: 20px;
+      font-weight: 500;
+      color: #113c23;
+    }
+
+    /* Options grid */
+    .options {
+      display: grid;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .option {
+      padding: 15px 20px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 1px solid #e9ecef;
+    }
+
+    .option:hover {
+      background: #e9ecef;
+      transform: translateY(-2px);
+    }
+
+    .option.selected {
+      background: linear-gradient(135deg, #4C9444 0%, #3b82f6 100%);
+      color: white;
+      border-color: transparent;
+    }
+
+    /* Buttons */
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #4C9444 0%, #3b82f6 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 20px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    /* Results */
+    .result {
+      text-align: center;
+      margin-top: 25px;
+      font-size: 18px;
+      font-weight: 600;
+      display: none;
+      padding: 15px;
+      border-radius: 8px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      header {
+        padding: 20px;
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      nav {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      .quiz-container {
+        margin: 20px;
+        padding: 25px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="../Homepage/HomepageWithAccount.html">Home</a>
+      <a href="../Showcase/ShowcaseWithAccount.html">Showcase</a>
+      <a href="../Registration/registration.html">Registration</a>
+      <a href="../Regulations/regulations.html">Regulations</a>
+      <a href="../Maintenance/Maintenance_Main.html">Maintenance</a>
+      <a href="Locations/Locations.html">Branch Locator</a>
+      <a href="Traffic/Traffic.html">Traffic Alerts</a>
+      <a href="Forum/Forum.html">Rider Forum</a>
+      <a href="Quiz.html" class="active">Safety Quiz</a>
+    </nav>
+  </header>
+
+  <div class="quiz-container">
+    <h1>Motorcycle Safety Quiz</h1>
+    
+    <div id="quiz">
+      <div class="quiz-header">
+        <div class="question" id="question"></div>
+        <div class="options" id="options"></div>
+      </div>
+      
+      <button class="btn" id="submit">Submit Answer</button>
+      <button class="btn" id="next" style="display: none;">Next Question</button>
+      
+      <div class="result" id="result"></div>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "What is the most important piece of safety gear for motorcyclists?",
+        options: ["Gloves", "Helmet", "Jacket", "Boots"],
+        answer: 1
+      },
+      {
+        question: "How often should you check your tire pressure?",
+        options: ["Weekly", "Monthly", "Every ride", "Every 6 months"],
+        answer: 2
+      },
+      {
+        question: "What should you do when approaching a curve?",
+        options: ["Speed up", "Slow down before entering", "Brake hard in the curve", "Close your eyes"],
+        answer: 1
+      },
+      {
+        question: "What percentage of accidents involve riders with less than 6 months experience?",
+        options: ["10%", "25%", "50%", "75%"],
+        answer: 2
+      },
+      {
+        question: "When should you use your high beams?",
+        options: ["Only at night", "When no other vehicles are present", "In foggy conditions", "All of the above"],
+        answer: 1
+      }
+    ];
+
+    const questionElement = document.getElementById('question');
+    const optionsElement = document.getElementById('options');
+    const submitButton = document.getElementById('submit');
+    const nextButton = document.getElementById('next');
+    const resultElement = document.getElementById('result');
+    
+    let currentQuestion = 0;
+    let score = 0;
+    let selectedOption = null;
+
+    function loadQuestion() {
+      const q = questions[currentQuestion];
+      questionElement.textContent = q.question;
+      
+      optionsElement.innerHTML = '';
+      q.options.forEach((option, index) => {
+        const button = document.createElement('div');
+        button.classList.add('option');
+        button.textContent = option;
+        button.addEventListener('click', () => selectOption(index));
+        optionsElement.appendChild(button);
+      });
+      
+      submitButton.style.display = 'block';
+      nextButton.style.display = 'none';
+      resultElement.style.display = 'none';
+      selectedOption = null;
+    }
+
+    function selectOption(index) {
+      const options = document.querySelectorAll('.option');
+      options.forEach(option => option.classList.remove('selected'));
+      options[index].classList.add('selected');
+      selectedOption = index;
+    }
+
+    function showResult(isCorrect) {
+      resultElement.style.display = 'block';
+      if (isCorrect) {
+        resultElement.textContent = 'Correct! ';
+        resultElement.style.color = '#10b981';
+      } else {
+        resultElement.textContent = 'Wrong! The correct answer was: ' + questions[currentQuestion].options[questions[currentQuestion].answer];
+        resultElement.style.color = '#ef4444';
+      }
+      
+      submitButton.style.display = 'none';
+      nextButton.style.display = 'block';
+    }
+
+    submitButton.addEventListener('click', () => {
+      if (selectedOption === null) return;
+      
+      const isCorrect = selectedOption === questions[currentQuestion].answer;
+      if (isCorrect) score++;
+      
+      showResult(isCorrect);
+    });
+
+    nextButton.addEventListener('click', () => {
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        loadQuestion();
+      } else {
+        quiz.innerHTML = `
+          <h2>Quiz Completed!</h2>
+          <p>Your score: ${score} out of ${questions.length}</p>
+          <button class="btn" onclick="location.reload()">Restart Quiz</button>
+        `;
+      }
+    });
+
+    loadQuestion();
+  </script>
+</body>
+</html>
