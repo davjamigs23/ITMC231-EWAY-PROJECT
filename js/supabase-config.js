@@ -346,4 +346,40 @@ export async function checkExistingSerial(serial) {
   }
 }
 
+export async function filterRegistrations({ status, dateFrom, dateTo, searchQuery }) {
+  try {
+    const client = adminClient;
+    let query = client
+      .from('ebike_registrations')
+      .select('*');
+
+    // Status filter
+    if (status && status !== 'all') {
+      query = query.eq('status', status.toLowerCase());
+    }
+
+    // Date range filter
+    if (dateFrom) {
+      query = query.gte('created_at', new Date(dateFrom).toISOString());
+    }
+    if (dateTo) {
+      query = query.lte('created_at', new Date(dateTo).toISOString());
+    }
+
+    // Search filter
+    if (searchQuery) {
+      query = query.or(
+        `owner_name.ilike.%${searchQuery}%,owner_email.ilike.%${searchQuery}%,serial_number.ilike.%${searchQuery}%`
+      );
+    }
+
+    const { data, error } = await query;
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Filter error:', error);
+    throw error;
+  }
+}
+
 export { supabase };

@@ -522,10 +522,10 @@
 
             <!-- Filter Section -->
             <div class="filter-section">
-                <form class="filter-form" id="searchForm">
+                <form class="filter-form" id="filter-form">
                     <div class="form-group">
-                        <label for="status">Status</label>
-                        <select id="status" class="form-control">
+                        <label for="filter-status">Status</label>
+                        <select id="filter-status" class="form-control">
                             <option value="">All Statuses</option>
                             <option value="pending">Pending</option>
                             <option value="approved">Approved</option>
@@ -533,16 +533,16 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="date_from">Date From</label>
-                        <input type="date" id="date_from" class="form-control">
+                        <label for="filter-date-from">Date From</label>
+                        <input type="date" id="filter-date-from" class="form-control">
                     </div>
                     <div class="form-group">
-                        <label for="date_to">Date To</label>
-                        <input type="date" id="date_to" class="form-control">
+                        <label for="filter-date-to">Date To</label>
+                        <input type="date" id="filter-date-to" class="form-control">
                     </div>
                     <div class="form-group">
-                        <label for="search">Search</label>
-                        <input type="text" id="search" class="form-control" placeholder="Search by ID, name, or model...">
+                        <label for="search-input">Search</label>
+                        <input type="text" id="search-input" class="form-control" placeholder="Search by name, email, or serial number...">
                     </div>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-search"></i> Filter
@@ -624,7 +624,7 @@
     </div>
 
     <script type="module">
-        import { loadAllRegistrations, updateRegistrationStatus, editRegistrationStatus, deleteRegistration } from '../js/supabase-config.js';
+        import { loadAllRegistrations, updateRegistrationStatus, editRegistrationStatus, deleteRegistration, filterRegistrations } from '../js/supabase-config.js';
 
         const REQUIRED_ELEMENTS = [
           'registrations-table-body',
@@ -829,6 +829,110 @@
               })
               .catch(error => console.error('Delete failed:', error));
           }
+        }
+
+        document.getElementById('filter-form').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          
+          const status = document.getElementById('filter-status').value;
+          const dateFrom = document.getElementById('filter-date-from').value;
+          const dateTo = document.getElementById('filter-date-to').value;
+          const searchQuery = document.getElementById('search-input').value;
+          
+          try {
+            const loading = document.getElementById('loading');
+            loading.style.display = 'block';
+            
+            const filteredData = await filterRegistrations({
+              status,
+              dateFrom,
+              dateTo,
+              searchQuery
+            });
+            
+            renderRegistrations(filteredData);
+          } catch (error) {
+            console.error('Filter failed:', error);
+            document.getElementById('error-message').textContent = 'Failed to apply filters';
+            document.getElementById('error-message').style.display = 'block';
+          } finally {
+            document.getElementById('loading').style.display = 'none';
+          }
+        });
+
+        async function renderRegistrations(registrations) {
+          const tableBody = document.getElementById('registrations-table-body');
+          tableBody.innerHTML = '';
+          
+          if (!registrations || registrations.length === 0) {
+            document.getElementById('no-results').style.display = 'block';
+            return;
+          }
+          
+          registrations.forEach(registration => {
+            const row = document.createElement('tr');
+            row.dataset.id = registration.id;
+            
+            const nameCell = document.createElement('td');
+            nameCell.textContent = registration.owner_name;
+            row.appendChild(nameCell);
+            
+            const emailCell = document.createElement('td');
+            emailCell.textContent = registration.owner_email;
+            row.appendChild(emailCell);
+            
+            const brandCell = document.createElement('td');
+            brandCell.textContent = registration.brand;
+            row.appendChild(brandCell);
+            
+            const modelCell = document.createElement('td');
+            modelCell.textContent = registration.ebike_model;
+            row.appendChild(modelCell);
+            
+            const serialCell = document.createElement('td');
+            serialCell.textContent = registration.serial_number;
+            row.appendChild(serialCell);
+            
+            const dateCell = document.createElement('td');
+            dateCell.textContent = new Date(registration.created_at).toLocaleDateString();
+            row.appendChild(dateCell);
+            
+            const statusCell = document.createElement('td');
+            statusCell.className = `status-cell ${registration.status}`;
+            statusCell.textContent = registration.status.charAt(0).toUpperCase() + registration.status.slice(1);
+            row.appendChild(statusCell);
+            
+            const actionsCell = document.createElement('td');
+            
+            if (registration.status === 'pending') {
+              const approveBtn = document.createElement('button');
+              approveBtn.className = 'approve-btn';
+              approveBtn.textContent = 'Approve';
+              approveBtn.onclick = () => approveRegistration(registration.id);
+              actionsCell.appendChild(approveBtn);
+              
+              const rejectBtn = document.createElement('button');
+              rejectBtn.className = 'reject-btn';
+              rejectBtn.textContent = 'Reject';
+              rejectBtn.onclick = () => rejectRegistration(registration.id);
+              actionsCell.appendChild(rejectBtn);
+            } else if (registration.status === 'approved' || registration.status === 'rejected') {
+              const editBtn = document.createElement('button');
+              editBtn.className = 'action-btn edit';
+              editBtn.textContent = 'Edit';
+              editBtn.onclick = () => showEditModal(registration.id, registration.status);
+              actionsCell.appendChild(editBtn);
+              
+              const deleteBtn = document.createElement('button');
+              deleteBtn.className = 'action-btn delete';
+              deleteBtn.textContent = 'Delete';
+              deleteBtn.onclick = () => confirmDelete(registration.id);
+              actionsCell.appendChild(deleteBtn);
+            }
+            
+            row.appendChild(actionsCell);
+            tableBody.appendChild(row);
+          });
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
