@@ -346,12 +346,16 @@ export async function checkExistingSerial(serial) {
   }
 }
 
-export async function filterRegistrations({ status, dateFrom, dateTo, searchQuery }) {
+export async function filterRegistrations({ status, dateFrom, dateTo, searchQuery, page = 1, pageSize = 10 }) {
   try {
     const client = adminClient;
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+    
     let query = client
       .from('ebike_registrations')
-      .select('*');
+      .select('*', { count: 'exact' })
+      .range(from, to);
 
     // Status filter
     if (status && status !== 'all') {
@@ -373,11 +377,82 @@ export async function filterRegistrations({ status, dateFrom, dateTo, searchQuer
       );
     }
 
-    const { data, error } = await query;
+    const { data, error, count } = await query;
+    if (error) throw error;
+    return { data, totalCount: count };
+  } catch (error) {
+    console.error('Filter error:', error);
+    throw error;
+  }
+}
+
+export async function exportRegistrations() {
+  try {
+    const client = adminClient;
+    const { data, error } = await client
+      .from('ebike_registrations')
+      .select('*');
+    
     if (error) throw error;
     return data;
   } catch (error) {
-    console.error('Filter error:', error);
+    console.error('Export failed:', error);
+    throw error;
+  }
+}
+
+export async function getRegistrationStats() {
+  try {
+    const client = adminClient;
+    
+    // Get total registrations
+    const { count: total } = await client
+      .from('ebike_registrations')
+      .select('*', { count: 'exact', head: true });
+    
+    // Get pending registrations
+    const { count: pending } = await client
+      .from('ebike_registrations')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'pending');
+    
+    // Get approved registrations
+    const { count: approved } = await client
+      .from('ebike_registrations')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'approved');
+    
+    // Get rejected registrations
+    const { count: rejected } = await client
+      .from('ebike_registrations')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'rejected');
+    
+    return {
+      total: total || 0,
+      pending: pending || 0,
+      approved: approved || 0,
+      rejected: rejected || 0
+    };
+  } catch (error) {
+    console.error('Error fetching stats:', error);
+    throw error;
+  }
+}
+
+export async function getRecentRegistrations() {
+  try {
+    const client = adminClient;
+    const { data, error } = await client
+      .from('ebike_registrations')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(5);
+    
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Error fetching recent registrations:', error);
     throw error;
   }
 }

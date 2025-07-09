@@ -555,7 +555,7 @@
                 <div class="table-header">
                     <h3 class="table-title">Registration Requests</h3>
                     <div class="table-actions">
-                        <button class="btn btn-secondary">
+                        <button class="btn btn-secondary export-btn">
                             <i class="fas fa-download"></i> Export
                         </button>
                     </div>
@@ -583,15 +583,6 @@
 
                 <!-- Pagination -->
                 <div class="pagination">
-                    <a href="#" class="pagination-item">
-                        <i class="fas fa-chevron-left"></i>
-                    </a>
-                    <a href="#" class="pagination-item active">1</a>
-                    <a href="#" class="pagination-item">2</a>
-                    <a href="#" class="pagination-item">3</a>
-                    <a href="#" class="pagination-item">
-                        <i class="fas fa-chevron-right"></i>
-                    </a>
                 </div>
             </div>
         </div>
@@ -624,7 +615,11 @@
     </div>
 
     <script type="module">
-        import { loadAllRegistrations, updateRegistrationStatus, editRegistrationStatus, deleteRegistration, filterRegistrations } from '../js/supabase-config.js';
+        import { loadAllRegistrations, updateRegistrationStatus, editRegistrationStatus, deleteRegistration, filterRegistrations, exportRegistrations } from '../js/supabase-config.js';
+
+        let currentPage = 1;
+        const pageSize = 10;
+        let totalCount = 0;
 
         const REQUIRED_ELEMENTS = [
           'registrations-table-body',
@@ -833,7 +828,11 @@
 
         document.getElementById('filter-form').addEventListener('submit', async (e) => {
           e.preventDefault();
-          
+          currentPage = 1; // Reset to first page on new filter
+          await applyFilters();
+        });
+
+        async function applyFilters() {
           const status = document.getElementById('filter-status').value;
           const dateFrom = document.getElementById('filter-date-from').value;
           const dateTo = document.getElementById('filter-date-to').value;
@@ -843,100 +842,208 @@
             const loading = document.getElementById('loading');
             loading.style.display = 'block';
             
-            const filteredData = await filterRegistrations({
+            const { data, totalCount: count } = await filterRegistrations({
               status,
               dateFrom,
               dateTo,
-              searchQuery
+              searchQuery,
+              page: currentPage,
+              pageSize
             });
             
-            renderRegistrations(filteredData);
+            totalCount = count;
+            renderRegistrations(data);
+            updatePaginationControls();
           } catch (error) {
             console.error('Filter failed:', error);
-            document.getElementById('error-message').textContent = 'Failed to apply filters';
+            document.getElementById('error-message').textContent = 'Failed to load data';
             document.getElementById('error-message').style.display = 'block';
           } finally {
             document.getElementById('loading').style.display = 'none';
           }
-        });
+        }
+
+        function updatePaginationControls() {
+          const totalPages = Math.ceil(totalCount / pageSize);
+          const paginationContainer = document.querySelector('.pagination');
+          
+          // Clear existing pagination
+          paginationContainer.innerHTML = '';
+          
+          // Previous button
+          const prevBtn = document.createElement('a');
+          prevBtn.href = '#';
+          prevBtn.className = `pagination-item ${currentPage === 1 ? 'disabled' : ''}`;
+          prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+          prevBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            if (currentPage > 1) {
+              currentPage--;
+              await applyFilters();
+            }
+          });
+          paginationContainer.appendChild(prevBtn);
+          
+          // Page numbers
+          const maxVisiblePages = 5;
+          let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+          let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+          
+          if (endPage - startPage + 1 < maxVisiblePages) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+          }
+          
+          for (let i = startPage; i <= endPage; i++) {
+            const pageLink = document.createElement('a');
+            pageLink.href = '#';
+            pageLink.className = `pagination-item ${i === currentPage ? 'active' : ''}`;
+            pageLink.textContent = i;
+            pageLink.addEventListener('click', async (e) => {
+              e.preventDefault();
+              currentPage = i;
+              await applyFilters();
+            });
+            paginationContainer.appendChild(pageLink);
+          }
+          
+          // Next button
+          const nextBtn = document.createElement('a');
+          nextBtn.href = '#';
+          nextBtn.className = `pagination-item ${currentPage === totalPages ? 'disabled' : ''}`;
+          nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+          nextBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            if (currentPage < totalPages) {
+              currentPage++;
+              await applyFilters();
+            }
+          });
+          paginationContainer.appendChild(nextBtn);
+        }
 
         async function renderRegistrations(registrations) {
           const tableBody = document.getElementById('registrations-table-body');
           tableBody.innerHTML = '';
           
-          if (!registrations || registrations.length === 0) {
-            document.getElementById('no-results').style.display = 'block';
-            return;
-          }
+          const noResultsElement = document.getElementById('no-results');
           
-          registrations.forEach(registration => {
-            const row = document.createElement('tr');
-            row.dataset.id = registration.id;
-            
-            const nameCell = document.createElement('td');
-            nameCell.textContent = registration.owner_name;
-            row.appendChild(nameCell);
-            
-            const emailCell = document.createElement('td');
-            emailCell.textContent = registration.owner_email;
-            row.appendChild(emailCell);
-            
-            const brandCell = document.createElement('td');
-            brandCell.textContent = registration.brand;
-            row.appendChild(brandCell);
-            
-            const modelCell = document.createElement('td');
-            modelCell.textContent = registration.ebike_model;
-            row.appendChild(modelCell);
-            
-            const serialCell = document.createElement('td');
-            serialCell.textContent = registration.serial_number;
-            row.appendChild(serialCell);
-            
-            const dateCell = document.createElement('td');
-            dateCell.textContent = new Date(registration.created_at).toLocaleDateString();
-            row.appendChild(dateCell);
-            
-            const statusCell = document.createElement('td');
-            statusCell.className = `status-cell ${registration.status}`;
-            statusCell.textContent = registration.status.charAt(0).toUpperCase() + registration.status.slice(1);
-            row.appendChild(statusCell);
-            
-            const actionsCell = document.createElement('td');
-            
-            if (registration.status === 'pending') {
-              const approveBtn = document.createElement('button');
-              approveBtn.className = 'approve-btn';
-              approveBtn.textContent = 'Approve';
-              approveBtn.onclick = () => approveRegistration(registration.id);
-              actionsCell.appendChild(approveBtn);
+          if (!registrations || registrations.length === 0) {
+            noResultsElement.style.display = 'block';
+          } else {
+            noResultsElement.style.display = 'none';
+            registrations.forEach(registration => {
+              const row = document.createElement('tr');
+              row.dataset.id = registration.id;
               
-              const rejectBtn = document.createElement('button');
-              rejectBtn.className = 'reject-btn';
-              rejectBtn.textContent = 'Reject';
-              rejectBtn.onclick = () => rejectRegistration(registration.id);
-              actionsCell.appendChild(rejectBtn);
-            } else if (registration.status === 'approved' || registration.status === 'rejected') {
-              const editBtn = document.createElement('button');
-              editBtn.className = 'action-btn edit';
-              editBtn.textContent = 'Edit';
-              editBtn.onclick = () => showEditModal(registration.id, registration.status);
-              actionsCell.appendChild(editBtn);
+              const nameCell = document.createElement('td');
+              nameCell.textContent = registration.owner_name;
+              row.appendChild(nameCell);
               
-              const deleteBtn = document.createElement('button');
-              deleteBtn.className = 'action-btn delete';
-              deleteBtn.textContent = 'Delete';
-              deleteBtn.onclick = () => confirmDelete(registration.id);
-              actionsCell.appendChild(deleteBtn);
-            }
-            
-            row.appendChild(actionsCell);
-            tableBody.appendChild(row);
-          });
+              const emailCell = document.createElement('td');
+              emailCell.textContent = registration.owner_email;
+              row.appendChild(emailCell);
+              
+              const brandCell = document.createElement('td');
+              brandCell.textContent = registration.brand;
+              row.appendChild(brandCell);
+              
+              const modelCell = document.createElement('td');
+              modelCell.textContent = registration.ebike_model;
+              row.appendChild(modelCell);
+              
+              const serialCell = document.createElement('td');
+              serialCell.textContent = registration.serial_number;
+              row.appendChild(serialCell);
+              
+              const dateCell = document.createElement('td');
+              dateCell.textContent = new Date(registration.created_at).toLocaleDateString();
+              row.appendChild(dateCell);
+              
+              const statusCell = document.createElement('td');
+              statusCell.className = `status-cell ${registration.status}`;
+              statusCell.textContent = registration.status.charAt(0).toUpperCase() + registration.status.slice(1);
+              row.appendChild(statusCell);
+              
+              const actionsCell = document.createElement('td');
+              
+              if (registration.status === 'pending') {
+                const approveBtn = document.createElement('button');
+                approveBtn.className = 'approve-btn';
+                approveBtn.textContent = 'Approve';
+                approveBtn.onclick = () => approveRegistration(registration.id);
+                actionsCell.appendChild(approveBtn);
+                
+                const rejectBtn = document.createElement('button');
+                rejectBtn.className = 'reject-btn';
+                rejectBtn.textContent = 'Reject';
+                rejectBtn.onclick = () => rejectRegistration(registration.id);
+                actionsCell.appendChild(rejectBtn);
+              } else if (registration.status === 'approved' || registration.status === 'rejected') {
+                const editBtn = document.createElement('button');
+                editBtn.className = 'action-btn edit';
+                editBtn.textContent = 'Edit';
+                editBtn.onclick = () => showEditModal(registration.id, registration.status);
+                actionsCell.appendChild(editBtn);
+                
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'action-btn delete';
+                deleteBtn.textContent = 'Delete';
+                deleteBtn.onclick = () => confirmDelete(registration.id);
+                actionsCell.appendChild(deleteBtn);
+              }
+              
+              row.appendChild(actionsCell);
+              tableBody.appendChild(row);
+            });
+          }
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
-          await loadAndDisplayRegistrations();
+          await applyFilters();
+        });
+
+        document.querySelector('.export-btn').addEventListener('click', async () => {
+          try {
+            const loading = document.getElementById('loading');
+            loading.style.display = 'block';
+            
+            const registrations = await exportRegistrations();
+            
+            // Convert to CSV
+            const headers = ['ID', 'Name', 'Email', 'Brand', 'Model', 'Serial Number', 'Status', 'Created At'];
+            const csvRows = [
+              headers.join(','),
+              ...registrations.map(reg => [
+                reg.id,
+                `"${reg.owner_name}"`,
+                `"${reg.owner_email}"`,
+                `"${reg.brand}"`,
+                `"${reg.ebike_model}"`,
+                `"${reg.serial_number}"`,
+                reg.status,
+                new Date(reg.created_at).toISOString()
+              ].join(','))
+            ];
+            
+            const csvContent = csvRows.join('\n');
+            
+            // Create download link
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `ebike-registrations-${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+          } catch (error) {
+            console.error('Export failed:', error);
+            document.getElementById('error-message').textContent = 'Failed to export data';
+            document.getElementById('error-message').style.display = 'block';
+          } finally {
+            document.getElementById('loading').style.display = 'none';
+          }
         });
     </script>
 </body>

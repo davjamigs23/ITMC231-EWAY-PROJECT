@@ -506,7 +506,7 @@
                         </div>
                     </div>
                     <div class="card-content">
-                        <div class="card-value">0</div>
+                        <div id="total-users" class="card-value">0</div>
                         <div class="card-description">Total Users</div>
                     </div>
                 </div>
@@ -518,7 +518,7 @@
                         </div>
                     </div>
                     <div class="card-content">
-                        <div class="card-value">0</div>
+                        <div id="pending-registrations" class="card-value">0</div>
                         <div class="card-description">Registration Requests</div>
                     </div>
                 </div>
@@ -530,7 +530,7 @@
                         </div>
                     </div>
                     <div class="card-content">
-                        <div class="card-value">0</div>
+                        <div id="content-updates" class="card-value">0</div>
                         <div class="card-description">Content Updates</div>
                     </div>
                 </div>
@@ -601,15 +601,23 @@
     </div>
 
     <script type="module">
-        import { loadAllRegistrations } from '../js/supabase-config.js';
+        import { getRegistrationStats, getRecentRegistrations } from '../js/supabase-config.js';
 
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                const registrations = await loadAllRegistrations();
-                const recentRegistrations = registrations.slice(0, 5); // Show 5 most recent
+                // Load stats
+                const stats = await getRegistrationStats();
                 
-                const tbody = document.querySelector('.dashboard-table tbody');
-                tbody.innerHTML = recentRegistrations.map(reg => `
+                // Update cards
+                document.getElementById('total-users').textContent = stats.total;
+                document.getElementById('pending-registrations').textContent = stats.pending;
+                document.getElementById('content-updates').textContent = stats.approved;
+                
+                // Load recent registrations
+                const recentRegistrations = await getRecentRegistrations();
+                const recentList = document.querySelector('.dashboard-table tbody');
+                
+                recentList.innerHTML = recentRegistrations.map(reg => `
                     <tr>
                         <td>${reg.owner_name}</td>
                         <td>${reg.owner_email}</td>
@@ -623,17 +631,28 @@
                     </tr>
                 `).join('');
                 
-                // Update stats counters
-                document.getElementById('total-registrations').textContent = registrations.length;
-                document.getElementById('pending-registrations').textContent = 
-                    registrations.filter(r => r.status === 'pending').length;
-                document.getElementById('approved-registrations').textContent = 
-                    registrations.filter(r => r.status === 'approved').length;
-                
             } catch (error) {
-                console.error('Error loading dashboard data:', error);
+                console.error('Dashboard load failed:', error);
+                document.getElementById('error-message').textContent = 'Failed to load dashboard data';
+                document.getElementById('error-message').style.display = 'block';
             }
         });
+
+        // Add real-time updates
+        const client = supabase;
+        client
+          .channel('dashboard-updates')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'ebike_registrations' }, async () => {
+            try {
+                const stats = await getRegistrationStats();
+                document.getElementById('total-users').textContent = stats.total;
+                document.getElementById('pending-registrations').textContent = stats.pending;
+                document.getElementById('content-updates').textContent = stats.approved;
+            } catch (error) {
+                console.error('Realtime update failed:', error);
+            }
+          })
+          .subscribe();
     </script>
 </body>
 </html>
