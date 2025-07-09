@@ -153,7 +153,7 @@
       background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
       background-size: 200% auto;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       border: none;
       color: white;
       font-weight: 600;
@@ -225,7 +225,7 @@
       background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
       background-size: 200% auto;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       border: none;
       color: white;
       font-weight: 600;
@@ -736,6 +736,15 @@
       transform: translateY(0);
     }
 
+    nav a.active {
+      color: #38a169;
+      font-weight: 500;
+    }
+
+    nav a.active::after {
+      width: 100%;
+    }
+
     /* Responsive adjustments */
     @media (max-width: 768px) {
       header {
@@ -788,11 +797,20 @@
     </nav>
     
     <div class="user-profile">
-      <img src="../Images/User Logo.png" alt="User Profile" onclick="toggleDropdown()" />
+      <img src="/Images/User Logo.png" alt="User Profile" onclick="toggleDropdown()" />
       <div id="dropdown-menu" class="dropdown-menu">
-        <a href="../User Profile/Profile.html"><i class="fas fa-user"></i> Profile Settings</a>
-        <a href="../User Profile/Contact.html"><i class="fas fa-envelope"></i> Contact</a>
-        <a href="../Homepage/Homepage.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        <a href="/User Profile/Profile.html">Profile Settings</a>
+        <a href="/User Profile/Contact.html">Contact</a>
+        <a href="/Homepage/Homepage.html">Logout</a>
+      </div>
+    </div>
+
+    <div class="user-profile" id="user-profile">
+      <img src="/Images/User Logo.png" alt="User Profile" onclick="toggleDropdown()" />
+      <div id="dropdown-menu" class="dropdown-menu">
+        <a href="/User Profile/About.html">About</a>
+        <a href="/User Profile/Contact.html">Contact</a>
+        <a href="/Homepage/Homepage.html">Logout</a>
       </div>
     </div>
   </header>
@@ -817,52 +835,52 @@
       <h1 class="text-center section-heading">BRANDS</h1>
     </div>
     <div class="container">
-      <div class="swiper mySwiper">
+      <div class="swiper tranding-slider">
         <div class="swiper-wrapper" id="brands-container">
           <!-- Brands will be loaded here dynamically -->
-          <div class="swiper-slide tranding-slide" data-brand-id="nwow">
+          <div class="swiper-slide tranding-slide" data-brand="nwow">
             <div class="tranding-slide-img">
               <a href="#" onclick="showBrandInfo('nwow')">
                 <img src="/Images/nwow.png" alt="NWOW">
               </a>
             </div>
           </div>
-          <div class="swiper-slide tranding-slide" data-brand-id="hatasu">
+          <div class="swiper-slide tranding-slide" data-brand="hatasu">
             <div class="tranding-slide-img">
               <a href="#" onclick="showBrandInfo('hatasu')">
                 <img src="/Images/hatasu.jpg" alt="Hatasu">
               </a>
             </div>
           </div>
-          <div class="swiper-slide tranding-slide" data-brand-id="kenwei">
+          <div class="swiper-slide tranding-slide" data-brand="kenwei">
             <div class="tranding-slide-img">
               <a href="#" onclick="showBrandInfo('kenwei')">
                 <img src="/Images/kenwei.png" alt="Kenwei">
               </a>
             </div>
           </div>
-          <div class="swiper-slide tranding-slide" data-brand-id="kuromake">
+          <div class="swiper-slide tranding-slide" data-brand="kuromake">
             <div class="tranding-slide-img">
               <a href="#" onclick="showBrandInfo('kuromake')">
                 <img src="/Images/kuromake.jpg" alt="Kuromake">
               </a>
             </div>
           </div>
-          <div class="swiper-slide tranding-slide" data-brand-id="johnson">
+          <div class="swiper-slide tranding-slide" data-brand="johnson">
             <div class="tranding-slide-img">
               <a href="#" onclick="showBrandInfo('johnson')">
                 <img src="/Images/johnson.jpg" alt="Johnson">
               </a>
             </div>
           </div>
-          <div class="swiper-slide tranding-slide" data-brand-id="redstar">
+          <div class="swiper-slide tranding-slide" data-brand="redstar">
             <div class="tranding-slide-img">
               <a href="#" onclick="showBrandInfo('redstar')">
                 <img src="/Images/redstar.png" alt="Redstar">
               </a>
             </div>
           </div>
-          <div class="swiper-slide tranding-slide" data-brand-id="surron">
+          <div class="swiper-slide tranding-slide" data-brand="surron">
             <div class="tranding-slide-img">
               <a href="#" onclick="showBrandInfo('surron')">
                 <img src="/Images/surron.png" alt="Surron">
@@ -887,6 +905,8 @@
       <i class="fas fa-edit"></i> Edit
     </button>
   </div>
+
+
 
   <!-- Admin Controls (Moved below brands images) -->
   <div class="admin-controls" id="admin-controls">
@@ -995,7 +1015,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mixitup/3.3.1/mixitup.min.js"></script>
   <script>
     // Initialize Swiper
-    var swiper = new Swiper('.mySwiper', {
+    const swiper = new Swiper('.tranding-slider', {
       effect: 'coverflow',
       grabCursor: true,
       centeredSlides: true,
@@ -1014,15 +1034,6 @@
       navigation: {
         nextEl: '.swiper-button-next',
         prevEl: '.swiper-button-prev',
-      },
-      on: {
-        click: function(swiper, event) {
-          const clickedSlide = event.target.closest('.tranding-slide');
-          if (clickedSlide) {
-            const brandId = clickedSlide.getAttribute('data-brand-id');
-            showBrandInfo(brandId);
-          }
-        }
       }
     });
 
@@ -1058,14 +1069,16 @@
 
     // Toggle dropdown menu
     function toggleDropdown() {
-      const dropdown = document.getElementById('dropdown-menu');
-      dropdown.style.display = dropdown.style.display === 'flex' ? 'none' : 'flex';
+      const menu = document.getElementById("dropdown-menu");
+      menu.style.display = (menu.style.display === "flex") ? "none" : "flex";
     }
 
     // Close dropdown if clicked outside
-    document.addEventListener('click', function(e) {
+    window.addEventListener("click", function(e) {
+      const dropdown = document.getElementById("dropdown-menu");
+      const profile = document.querySelector(".user-profile img");
       if (!e.target.closest('.user-profile')) {
-        document.getElementById('dropdown-menu').style.display = 'none';
+        dropdown.style.display = "none";
       }
     });
 
@@ -1094,36 +1107,53 @@
     document.getElementById("search-input").addEventListener("input", function(e) {
       const searchTerm = e.target.value.toLowerCase().trim();
       const brands = document.querySelectorAll(".tranding-slide");
-      const products = document.querySelectorAll(".product");
       let hasResults = false;
 
-      // Search brands
+      // If search is empty, show all brands
+      if (searchTerm === '') {
+        brands.forEach(brand => {
+          brand.style.display = "flex";
+        });
+        document.getElementById("no-results").style.display = "none";
+        return;
+      }
+
+      // Search through brands and products
+      let foundBrands = false;
+      let foundProducts = false;
+      
+      // First search brands
       brands.forEach(brand => {
-        const brandName = brand.querySelector('h3').textContent.toLowerCase();
+        const brandId = brand.getAttribute('data-brand');
+        const brandName = brand.querySelector("img").alt.toLowerCase();
+        const brandData = getBrandData(brandId);
+        
+        // Check if brand name matches
         if (brandName.includes(searchTerm)) {
           brand.style.display = "flex";
-          hasResults = true;
-        } else {
+          foundBrands = true;
+          return;
+        }
+        
+        // Check if any product name matches
+        if (brandData && brandData.products) {
+          for (const product of brandData.products) {
+            if (product.name.toLowerCase().includes(searchTerm)) {
+              brand.style.display = "flex";
+              foundBrands = true;
+              break;
+            }
+          }
+        }
+        
+        // If no match found, hide the brand
+        if (!foundBrands) {
           brand.style.display = "none";
         }
       });
 
-      // Search products if product section is visible
-      if (document.getElementById('product').style.display === 'block') {
-        products.forEach(product => {
-          const productName = product.querySelector('h3').textContent.toLowerCase();
-          if (productName.includes(searchTerm)) {
-            product.style.display = "block";
-            hasResults = true;
-          } else {
-            product.style.display = "none";
-          }
-        });
-      }
-
-      // Show no results message if needed
-      document.getElementById("no-results").style.display = 
-        hasResults || searchTerm === '' ? "none" : "block";
+      // Show no results message if nothing found
+      document.getElementById("no-results").style.display = foundBrands ? "none" : "block";
     });
 
     // Helper function to get brand data
@@ -1151,7 +1181,7 @@
       const brandsContainer = document.getElementById("brands-container");
       const newBrand = document.createElement("div");
       newBrand.className = "swiper-slide tranding-slide";
-      newBrand.setAttribute('data-brand-id', name.toLowerCase().replace(/\s+/g, '-'));
+      newBrand.setAttribute('data-brand', name.toLowerCase().replace(/\s+/g, '-'));
       newBrand.innerHTML = `
         <div class="tranding-slide-img">
           <a href="#" onclick="showBrandInfo('${name.toLowerCase().replace(/\s+/g, '-')}')">
@@ -1206,7 +1236,7 @@
       const imageUrl = document.getElementById("edit-brand-image").value;
       const description = document.getElementById("edit-brand-description").value;
       const brandSlide = document.querySelectorAll(".tranding-slide")[index];
-      const oldBrandId = brandSlide.getAttribute('data-brand-id');
+      const oldBrandId = brandSlide.getAttribute('data-brand');
       const newBrandId = name.toLowerCase().replace(/\s+/g, '-');
 
       // Only update if something changed
@@ -1217,7 +1247,7 @@
         (brandData[oldBrandId]?.description || "") !== description
       ) {
         // Update the slide
-        brandSlide.setAttribute('data-brand-id', newBrandId);
+        brandSlide.setAttribute('data-brand', newBrandId);
         brandSlide.innerHTML = `
           <div class="tranding-slide-img">
             <a href="#" onclick="showBrandInfo('${newBrandId}')">
@@ -1239,6 +1269,8 @@
       closeModal("edit-modal");
     }
 
+
+
     // Load brand data when edit brand is selected
     document.getElementById("edit-brand").addEventListener("change", function(e) {
       const index = e.target.value;
@@ -1246,7 +1278,7 @@
 
       const brandSlide = document.querySelectorAll(".tranding-slide")[index];
       const img = brandSlide.querySelector("img");
-      const brandId = brandSlide.getAttribute('data-brand-id');
+      const brandId = brandSlide.getAttribute('data-brand');
 
       document.getElementById("edit-brand-name").value = img.alt;
       document.getElementById("edit-brand-image").value = img.src;
