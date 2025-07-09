@@ -3,10 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>E-Way | Safety Quiz</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <title>E-WAY | Rider Safety Games</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary: #0f5132;
+      --secondary: #e9c5c0;
+      --accent: #c2410c;
+      --light: #f8f9fa;
+      --dark: #1e293b;
+    }
+
     * {
       margin: 0;
       padding: 0;
@@ -15,12 +23,12 @@
     }
 
     body {
-      background-color: #ffffff;
-      color: #113c23;
-      line-height: 1.6;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e7beb5 100%);
+      color: var(--dark);
+      min-height: 100vh;
     }
 
-    /* Header matching Maintenance_Main.html */
+    /* Header - matches other pages exactly */
     header {
       display: flex;
       justify-content: space-between;
@@ -30,7 +38,7 @@
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
       position: sticky;
       top: 0;
-      z-index: 100;
+      z-index: 1000;
     }
 
     nav {
@@ -40,7 +48,7 @@
 
     nav a {
       text-decoration: none;
-      color: #333;
+      color: #113c23;
       font-weight: 400;
       font-size: 17px;
       transition: color 0.3s;
@@ -48,7 +56,7 @@
     }
 
     nav a:hover {
-      color: #4C9444;
+      color: #0f5132;
     }
 
     nav a::after {
@@ -58,7 +66,7 @@
       height: 2px;
       bottom: -5px;
       left: 0;
-      background-color: #4C9444;
+      background-color: #0f5132;
       transition: width 0.3s;
     }
 
@@ -66,175 +74,461 @@
       width: 100%;
     }
 
-    .active {
-      color: #4C9444;
+    nav a.active {
+      color: #0f5132;
       font-weight: 600;
     }
 
-    /* Quiz container styling */
-    .quiz-container {
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 40px;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 30px;
-      color: #093820;
-      font-size: 28px;
-    }
-
-    /* Question styling */
-    .question {
-      font-size: 18px;
-      margin-bottom: 20px;
-      font-weight: 500;
-      color: #113c23;
-    }
-
-    /* Options grid */
-    .options {
-      display: grid;
-      gap: 15px;
-      margin-bottom: 30px;
-    }
-
-    .option {
-      padding: 15px 20px;
-      background: #f8f9fa;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border: 1px solid #e9ecef;
-    }
-
-    .option:hover {
-      background: #e9ecef;
-      transform: translateY(-2px);
-    }
-
-    .option.selected {
-      background: linear-gradient(135deg, #4C9444 0%, #3b82f6 100%);
-      color: white;
-      border-color: transparent;
-    }
-
-    /* Buttons */
-    .btn {
-      display: block;
+    nav a.active::after {
       width: 100%;
-      padding: 15px;
-      background: linear-gradient(135deg, #4C9444 0%, #3b82f6 100%);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      margin-top: 20px;
     }
 
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-
-    /* Results */
-    .result {
-      text-align: center;
-      margin-top: 25px;
-      font-size: 18px;
-      font-weight: 600;
-      display: none;
-      padding: 15px;
-      border-radius: 8px;
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-      header {
-        padding: 20px;
-        flex-direction: column;
-        gap: 15px;
-      }
-      
-      nav {
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-      
-      .quiz-container {
-        margin: 20px;
-        padding: 25px;
-      }
-    }
-
-    /* User Profile Dropdown */
+    /* User Profile - exact match to other pages */
     .user-profile {
       position: relative;
+      display: flex;
+      align-items: center;
     }
-    
+
     .user-profile img {
-      width: 40px;
-      height: 40px;
+      height: 50px;
+      width: 50px;
       border-radius: 50%;
+      object-fit: cover;
       cursor: pointer;
-      transition: all 0.3s ease;
-      border: 2px solid white;
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.1);
+      border: 2px solid #fff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease;
     }
-    
+
     .user-profile img:hover {
       transform: scale(1.05);
-      box-shadow: 0 0 10px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.1);
     }
-    
+
     .dropdown-menu {
       display: none;
       position: absolute;
       right: 0;
+      top: 70px;
       background: white;
+      min-width: 200px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
       border-radius: 8px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      min-width: 180px;
       z-index: 1000;
-      overflow: hidden;
-      transform: translateY(10px);
-      opacity: 0;
-      transition: all 0.3s ease;
+      flex-direction: column;
+      padding: 10px 0;
     }
-    
+
     .dropdown-menu.show {
       display: flex;
-      flex-direction: column;
-      transform: translateY(0);
-      opacity: 1;
     }
-    
+
     .dropdown-menu a {
-      padding: 12px 20px;
+      padding: 10px 20px;
+      color: #1e293b;
       text-decoration: none;
-      color: #333;
-      font-size: 14px;
-      transition: all 0.3s ease;
+      transition: all 0.3s;
       display: flex;
       align-items: center;
       gap: 10px;
     }
-    
+
+    .dropdown-menu a:hover {
+      background: #f0fdf4;
+      color: #0f5132;
+    }
+
     .dropdown-menu a i {
       width: 20px;
       text-align: center;
     }
-    
-    .dropdown-menu a:hover {
-      background: #4C9444;
+
+    /* Main Game Container */
+    .game-container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+
+    .game-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .game-title {
+      font-size: 2.5rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .game-subtitle {
+      color: var(--dark);
+      font-size: 1.2rem;
+    }
+
+    /* Game Selection Cards */
+    .game-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin: 3rem 0;
+    }
+
+    .game-card {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .game-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    }
+
+    .game-icon {
+      font-size: 3rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .game-name {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--primary);
+    }
+
+    .game-desc {
+      color: #64748b;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Enhanced Play Button Styles */
+    .btn-play {
+      position: relative;
+      background: linear-gradient(135deg, var(--primary) 0%, #1a936f 100%);
       color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 12px 30px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(26, 147, 111, 0.3);
+      transition: all 0.3s ease;
+      overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .btn-play:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(26, 147, 111, 0.4);
+    }
+    
+    .btn-play:active {
+      transform: translateY(1px);
+    }
+    
+    .btn-play i {
+      margin-right: 8px;
+      transition: transform 0.3s ease;
+    }
+    
+    .btn-play:hover i {
+      transform: scale(1.2);
+    }
+    
+    /* Pulse animation for game cards */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    .game-card:hover .btn-play {
+      animation: pulse 1.5s infinite;
+    }
+
+    /* Quiz Styles */
+    .quiz-container {
+      position: relative;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      padding: 2rem;
+      margin: 1rem auto;
+      max-width: 800px;
+      transition: all 0.3s ease;
+    }
+    
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .quiz-progress {
+      height: 10px;
+      background: #e2e8f0;
+      border-radius: 5px;
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+
+    .quiz-progress-bar {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    #question {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: #333;
+      line-height: 1.4;
+      transition: opacity 0.3s ease;
+    }
+    
+    .question-image {
+      max-width: 100%;
+      max-height: 200px;
+      display: block;
+      margin: 0 auto 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .options-container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .option-btn {
+      padding: 1rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      border-color: var(--primary);
+    }
+
+    /* Progress Bar */
+    .progress-container {
+      height: 8px;
+      background: #f0f0f0;
+      border-radius: 4px;
+      margin: 1.5rem 0;
+      overflow: hidden;
+    }
+    
+    .progress-bar {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    /* Explanation Text */
+    .explanation {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: #f8f9fa;
+      border-left: 4px solid var(--primary);
+      border-radius: 0 4px 4px 0;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Feedback Modal */
+    .feedback {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      z-index: 1000;
+      display: none;
+      text-align: center;
+      max-width: 400px;
+    }
+
+    .feedback-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .correct {
+      color: #16a34a;
+    }
+
+    .incorrect {
+      color: #dc2626;
+    }
+
+    /* Score Display */
+    .score-display {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .score-card {
+      background: white;
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .score-value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      header {
+        padding: 15px;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .game-options {
+        grid-template-columns: 1fr;
+      }
+      
+      #options {
+        grid-template-columns: 1fr;
+      }
+      
+      .quiz-container {
+        padding: 1.5rem;
+        margin: 1rem;
+      }
+      
+      #question {
+        font-size: 1.2rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .quiz-container {
+        padding: 1rem;
+      }
+      
+      .option-btn {
+        padding: 0.8rem;
+      }
+    }
+
+    /* Back button styling */
+    .btn-back {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      padding: 8px 16px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+      z-index: 10;
+    }
+    
+    .btn-back:hover {
+      background: #0c4127;
+      transform: translateX(-2px);
+    }
+    
+    .btn-back i {
+      margin-right: 5px;
+    }
+
+    /* Add to existing styles */
+    @keyframes correctAnswer {
+      0% { transform: scale(1); box-shadow: 0 0 0 rgba(76, 175, 80, 0); }
+      50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(76, 175, 80, 0.7); }
+      100% { transform: scale(1); box-shadow: 0 0 0 rgba(76, 175, 80, 0); }
+    }
+    
+    @keyframes wrongAnswer {
+      0% { transform: translateX(0); }
+      20% { transform: translateX(-10px); }
+      40% { transform: translateX(10px); }
+      60% { transform: translateX(-10px); }
+      80% { transform: translateX(10px); }
+      100% { transform: translateX(0); }
+    }
+    
+    @keyframes bounceIn {
+      0% { transform: scale(0.8); opacity: 0; }
+      70% { transform: scale(1.05); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    
+    .question-container {
+      animation: bounceIn 0.5s ease-out;
+    }
+    
+    .correct {
+      animation: correctAnswer 0.8s ease;
+      background: #4CAF50 !important;
+      color: white !important;
+    }
+    
+    .wrong {
+      animation: wrongAnswer 0.5s ease;
+      background: #F44336 !important;
+      color: white !important;
+    }
+    
+    /* Trophy animation */
+    @keyframes spinTrophy {
+      0% { transform: rotate(0deg) scale(0.5); }
+      50% { transform: rotate(180deg) scale(1.2); }
+      100% { transform: rotate(360deg) scale(1); }
+    }
+    
+    .trophy {
+      animation: spinTrophy 1s ease-out;
+    }
+    
+    /* Confetti effect */
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #f00;
+      opacity: 0;
     }
   </style>
 </head>
@@ -246,14 +540,14 @@
       <a href="../Maintenance/Maintenance_Main.html">Maintenance</a>
       <a href="../Showcase/ShowcaseWithAccount.html">Showcase</a>
       <a href="../Registration/registration.html">Registration</a>
-      <a href="../Features/Locations.html">Branch Locator</a>
-      <a href="../Features/Traffic.html">Traffic Alerts</a>
-      <a href="../Features/Forum.html">Rider Forum</a>
-      <a href="Quiz.html" class="active">Safety Quiz</a>
+      <a href="Locations.html">Branch Locator</a>
+      <a href="Traffic.html">Traffic Alerts</a>
+      <a href="Forum.html">Rider Forum</a>
+      <a href="Quiz.html" class="active">Safety Games</a>
     </nav>
     
     <div class="user-profile">
-      <img src="../Images/User Logo.png" alt="User Profile" onclick="toggleDropdown()" />
+      <img src="../Images/User Logo.png" alt="User Profile" onclick="toggleDropdown()">
       <div id="dropdown-menu" class="dropdown-menu">
         <a href="../User Profile/Profile.html"><i class="fas fa-user"></i> Profile Settings</a>
         <a href="../User Profile/Contact.html"><i class="fas fa-envelope"></i> Contact</a>
@@ -262,139 +556,756 @@
     </div>
   </header>
 
-  <div class="quiz-container">
-    <h1>Motorcycle Safety Quiz</h1>
-    
-    <div id="quiz">
-      <div class="quiz-header">
-        <div class="question" id="question"></div>
-        <div class="options" id="options"></div>
+  <div class="game-container">
+    <div class="game-header">
+      <h1 class="game-title">E-WAY Safety Games</h1>
+      <p class="game-subtitle">Test your knowledge and become a safer rider!</p>
+    </div>
+
+    <!-- Game Selection Screen -->
+    <div id="game-selection">
+      <div class="game-options">
+        <div class="game-card" data-quiz-type="safety">
+          <div class="game-icon">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <h3 class="game-name">Safety Quiz</h3>
+          <p class="game-desc">Test your knowledge of e-bike safety rules and best practices</p>
+          <button class="btn-play">Play Now</button>
+        </div>
+
+        <div class="game-card" data-quiz-type="signs">
+          <div class="game-icon">
+            <i class="fas fa-traffic-light"></i>
+          </div>
+          <h3 class="game-name">Sign Identification</h3>
+          <p class="game-desc">Identify traffic signs and understand their meaning</p>
+          <button class="btn-play">Play Now</button>
+        </div>
+
+        <div class="game-card" data-quiz-type="scenario">
+          <div class="game-icon">
+            <i class="fas fa-road"></i>
+          </div>
+          <h3>Scenario Challenge</h3>
+          <p>Test your decision-making in real riding situations</p>
+          <button class="btn-play" onclick="startQuiz('scenario')">
+            <i class="fas fa-play"></i> Play Now
+          </button>
+        </div>
       </div>
-      
-      <button class="btn" id="submit">Submit Answer</button>
-      <button class="btn" id="next" style="display: none;">Next Question</button>
-      
-      <div class="result" id="result"></div>
+    </div>
+
+    <!-- Quiz Container -->
+    <div id="quiz-container" class="quiz-container" style="display: none;">
+      <button id="back-button" class="btn-back" onclick="backToGames()">
+        <i class="fas fa-arrow-left"></i> Back to Games
+      </button>
+      <div class="quiz-header">
+        <div class="score">Score: <span id="score">0</span></div>
+        <div class="question-count">Question <span id="current-question">1</span>/<span id="total-questions">20</span></div>
+      </div>
+      <div class="quiz-progress">
+        <div class="quiz-progress-bar" id="progress-bar"></div>
+      </div>
+      <h2 id="question"></h2>
+      <div class="options-container" id="options"></div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div id="feedback" class="feedback" style="display: none;">
+      <div class="feedback-icon" id="feedback-icon"></div>
+      <h2 id="feedback-text"></h2>
+      <p id="feedback-explanation"></p>
+      <button class="btn-next" onclick="nextQuestion()">Continue</button>
     </div>
   </div>
 
   <script>
-    // User profile dropdown toggle
-    function toggleDropdown() {
-      const dropdown = document.getElementById('dropdown-menu');
-      dropdown.classList.toggle('show');
-    }
-    
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(event) {
-      if (!event.target.closest('.user-profile')) {
-        const dropdown = document.getElementById('dropdown-menu');
-        dropdown.classList.remove('show');
-      }
-    });
-    
-    // Original quiz JavaScript below
-    const questions = [
+    // Enhanced safety quiz with 20 questions
+    const safetyQuestions = [
       {
-        question: "What is the most important piece of safety gear for motorcyclists?",
-        options: ["Gloves", "Helmet", "Jacket", "Boots"],
-        answer: 1
+        question: "What is the recommended safety gear for e-bike riders in Naga City?",
+        options: ["Helmet only", "Helmet and reflective vest", "No gear required", "Full protective suit"],
+        answer: 1,
+        explanation: "City Ordinance requires helmet and recommends reflective gear for visibility"
       },
       {
-        question: "How often should you check your tire pressure?",
-        options: ["Weekly", "Monthly", "Every ride", "Every 6 months"],
-        answer: 2
+        question: "What's the penalty for riding without helmet in Naga City?",
+        options: ["Warning only", "₱500 fine", "₱1,000 fine and seminar", "Confiscation of e-bike"],
+        answer: 2,
+        explanation: "City Ordinance No. 2021-045 mandates ₱1,000 fine and safety seminar"
       },
       {
-        question: "What should you do when approaching a curve?",
-        options: ["Speed up", "Slow down before entering", "Brake hard in the curve", "Close your eyes"],
-        answer: 1
+        question: "At what age can you legally operate an e-bike in Naga City?",
+        options: ["12 years old", "16 years old", "18 years old", "Any age with supervision"],
+        answer: 2,
+        explanation: "Minimum age requirement is 16 years with valid ID"
       },
       {
-        question: "What percentage of accidents involve riders with less than 6 months experience?",
-        options: ["10%", "25%", "50%", "75%"],
-        answer: 2
+        question: "Where should e-bikes be parked in public areas?",
+        image: "../Images/parking-zones.jpg",
+        options: ["Anywhere on sidewalk", "Designated parking zones only", "Against building walls", "In bicycle lanes"],
+        answer: 1,
+        explanation: "Designated parking zones prevent obstruction and theft"
       },
       {
-        question: "When should you use your high beams?",
-        options: ["Only at night", "When no other vehicles are present", "In foggy conditions", "All of the above"],
-        answer: 1
+        question: "When must headlights be turned on?",
+        options: ["6PM to 6AM", "Only when dark", "At all times", "In heavy rain only"],
+        answer: 0,
+        explanation: "City ordinance requires lights from 6PM to 6AM regardless of visibility"
+      },
+      {
+        question: "Maximum speed limit for e-bikes in residential areas?",
+        options: ["20 km/h", "25 km/h", "30 km/h", "No limit"],
+        answer: 1,
+        explanation: "City ordinance sets maximum at 25 km/h in residential zones"
+      },
+      {
+        question: "What should you do when approaching a school zone?",
+        options: ["Maintain speed", "Slow down", "Honk to alert children", "Use sidewalk instead"],
+        answer: 1,
+        explanation: "Reduced speed (20 km/h) is required in school zones"
+      },
+      {
+        question: "How often should e-bike brakes be inspected?",
+        options: ["Every 6 months", "Every month", "Only when they feel weak", "Before every ride"],
+        answer: 3,
+        explanation: "Brakes should be checked before each ride for safety"
+      },
+      {
+        question: "What's the proper way to carry items on an e-bike?",
+        options: ["In one hand", "Balanced on handlebars", "In a secured basket/rack", "Any way that's comfortable"],
+        answer: 2,
+        explanation: "Items should be securely fastened to prevent imbalance"
+      },
+      {
+        question: "When riding at night, what additional safety measure is recommended?",
+        options: ["Wearing bright colors", "Using phone flashlight", "Installing reflective stickers", "Riding in groups"],
+        answer: 2,
+        explanation: "Reflective stickers significantly improve nighttime visibility"
+      },
+      {
+        question: "What's the safe following distance behind vehicles?",
+        options: ["1 meter", "2 meters", "3 meters", "Same as cars"],
+        answer: 2,
+        explanation: "3 meters provides adequate stopping distance"
+      },
+      {
+        question: "How should you approach a wet road surface?",
+        options: ["Brake suddenly if needed", "Maintain normal speed", "Reduce speed and avoid sharp turns", "Ride on sidewalk instead"],
+        answer: 2,
+        explanation: "Reduced speed and gentle maneuvers prevent skidding"
+      },
+      {
+        question: "What's the first thing to check before riding?",
+        options: ["Battery level", "Tire pressure", "Brakes", "All of the above"],
+        answer: 3,
+        explanation: "All components should be checked before each ride"
+      },
+      {
+        question: "When is it unsafe to ride an e-bike?",
+        options: ["During light rain", "When tired", "At night", "All of the above"],
+        answer: 1,
+        explanation: "Fatigue significantly impairs riding ability"
+      },
+      {
+        question: "What should you do if your e-bike starts wobbling?",
+        options: ["Brake hard", "Speed up", "Gradually slow down", "Jump off"],
+        answer: 2,
+        explanation: "Gradual slowing helps regain control"
+      },
+      {
+        question: "Proper way to ride downhill?",
+        options: ["Coast without brakes", "Use both brakes evenly", "Use only front brake", "Walk the bike down"],
+        answer: 1,
+        explanation: "Even braking prevents skidding or flipping"
+      },
+      {
+        question: "What indicates worn-out tires?",
+        options: ["Smooth surface", "Visible threads", "Minor cracks", "All of the above"],
+        answer: 3,
+        explanation: "All are signs tires need replacement"
+      },
+      {
+        question: "How to properly store an e-bike?",
+        options: ["In direct sunlight", "In humid areas", "Indoors at room temperature", "Anywhere convenient"],
+        answer: 2,
+        explanation: "Moderate temperatures prevent battery damage"
+      },
+      {
+        question: "What's the recommended battery charging practice?",
+        options: ["Fully discharge before charging", "Keep plugged in always", "Charge to 80% for daily use", "Only charge when completely empty"],
+        answer: 2,
+        explanation: "80% charging prolongs battery lifespan"
+      },
+      {
+        question: "Who has right of way at uncontrolled intersections?",
+        options: ["Larger vehicles", "Whoever arrives first", "E-bikes always", "Pedestrians first"],
+        answer: 1,
+        explanation: "First-come, first-served rule applies"
       }
     ];
 
-    const questionElement = document.getElementById('question');
-    const optionsElement = document.getElementById('options');
-    const submitButton = document.getElementById('submit');
-    const nextButton = document.getElementById('next');
-    const resultElement = document.getElementById('result');
-    
+    // Randomize and select 20 questions
+    function getRandomQuestions() {
+      // Shuffle array
+      const shuffled = [...safetyQuestions].sort(() => 0.5 - Math.random());
+      // Get 20 questions
+      return shuffled.slice(0, 20);
+    }
+
+    // Initialize game variables
+    let gameData = [];
     let currentQuestion = 0;
     let score = 0;
-    let selectedOption = null;
 
+    // Start quiz function with element verification
+    function startQuiz(type) {
+      try {
+        const gameSelection = document.getElementById('game-selection');
+        const quizContainer = document.getElementById('quiz-container');
+        
+        if (!gameSelection || !quizContainer) {
+          throw new Error('Required game elements not found');
+        }
+        
+        // Verify quiz type exists
+        if (!quizzes[type] && type !== 'safety') {
+          throw new Error(`Invalid quiz type: ${type}`);
+        }
+        
+        // Reset game state
+        currentQuestion = 0;
+        score = 0;
+        currentGame = type;
+        
+        // Load quiz data with validation
+        gameData = type === 'safety' ? getRandomQuestions() : [...quizzes[type]];
+        if (!gameData || gameData.length === 0) {
+          throw new Error('No questions loaded');
+        }
+        gameData.sort(() => 0.5 - Math.random());
+        
+        // Show quiz container
+        gameSelection.style.display = 'none';
+        quizContainer.style.display = 'block';
+        
+        loadQuestion();
+      } catch (error) {
+        console.error('Quiz start failed:', error);
+        // Attempt recovery
+        const gameSelection = document.getElementById('game-selection');
+        if (gameSelection) gameSelection.style.display = 'block';
+        alert('Quiz initialization failed. Please refresh the page and try again.');
+      }
+    }
+
+    // Enhanced game data with images and more questions
+    const quizzes = {
+      signs: [
+        // Basic Regulatory Signs (3)
+        {
+          question: "What does this sign mean?",
+          image: "../Images/stopsign.png",
+          options: ["Stop ahead", "Come to complete stop", "Yield to other vehicles", "No stopping allowed"],
+          answer: 1,
+          explanation: "Octagonal red sign means you must come to a complete stop"
+        },
+        {
+          question: "Identify this triangular sign",
+          image: "../Images/givewaysign.png",
+          options: ["Stop", "Yield right of way", "No Entry", "One Way"],
+          answer: 1,
+          explanation: "Red and white triangle means yield to other vehicles"
+        },
+        {
+          question: "This circular sign indicates:",
+          image: "../Images/noentry.png",
+          options: ["No stopping", "No entry for vehicles", "One way street", "Roundabout ahead"],
+          answer: 1,
+          explanation: "Red circle with white horizontal bar prohibits entry"
+        },
+        
+        // Warning Signs (4)
+        {
+          question: "What hazard does this sign warn about?",
+          image: "../Images/bikelane.png",
+          options: ["Bicycle crossing", "Bicycle lane starts", "Bikes prohibited", "Bike parking area"],
+          answer: 1,
+          explanation: "White bicycle symbol indicates start of dedicated bike lane"
+        },
+        {
+          question: "This yellow diamond sign means:",
+          image: "../Images/pedestrian.png",
+          options: ["Pedestrian crossing ahead", "No pedestrians allowed", "Pedestrian zone", "Walking path"],
+          answer: 0,
+          explanation: "Warns drivers to watch for people crossing the road"
+        },
+        {
+          question: "What does this road marking mean?",
+          image: "../Images/narrowbridge.png",
+          options: ["Bridge height limit", "Narrow bridge ahead", "Bridge closed", "Toll bridge"],
+          answer: 1,
+          explanation: "Warns that the bridge ahead is narrower than the current road"
+        },
+        {
+          question: "This sign indicates:",
+          image: "../Images/trafficlight.png",
+          options: ["Traffic signal ahead", "Stop here for light", "No traffic lights", "Emergency signal"],
+          answer: 0,
+          explanation: "Warns of traffic lights ahead that may require stopping"
+        },
+        
+        // Prohibitory Signs (5)
+        {
+          question: "This sign means:",
+          image: "../Images/nostop.png",
+          options: ["No stopping anytime", "No parking", "Loading zone", "Emergency stop only"],
+          answer: 0,
+          explanation: "Red circle with slash over 'S' means no stopping allowed"
+        },
+        {
+          question: "What does this prohibition sign indicate?",
+          image: "../Images/noleft.png",
+          options: ["No U-turn", "No left turn", "Left lane ends", "Left turn only"],
+          answer: 1,
+          explanation: "Red circle with left arrow and slash prohibits left turns"
+        },
+        {
+          question: "This sign prohibits:",
+          image: "../Images/noright.png",
+          options: ["Right turns", "Right lane merging", "Right of way", "Right side parking"],
+          answer: 0,
+          explanation: "Red circle with right arrow and slash means no right turns"
+        },
+        {
+          question: "This sign means:",
+          image: "../Images/motorcycle.png",
+          options: ["Motorcycle parking", "No motorcycles", "Motorcycle lane", "Motorcycle crossing"],
+          answer: 1,
+          explanation: "Red circle with motorcycle symbol and slash prohibits motorcycles"
+        },
+        {
+          question: "What indicates this parking sign?",
+          image: "../Images/parking.png",
+          options: ["Free parking", "Paid parking", "No parking anytime", "Parking with permit"],
+          answer: 1,
+          explanation: "Blue square with white 'P' indicates designated parking area"
+        },
+        
+        // Road Markings (4)
+        {
+          question: "Identify this road marking:",
+          image: "../Images/doublesolid.png",
+          options: ["Passing allowed", "No passing both directions", "One-way traffic", "Center turn lane"],
+          answer: 1,
+          explanation: "Double solid yellow lines mean no passing in either direction"
+        },
+        {
+          question: "This sign indicates:",
+          image: "../Images/singlesolid.png",
+          options: ["Passing allowed", "No passing", "Merge ahead", "Lane ends"],
+          answer: 1,
+          explanation: "Single solid yellow line means no passing on your side"
+        },
+        {
+          question: "What does this road marking mean?",
+          image: "../Images/brokenandsolid.png",
+          options: ["Passing allowed both ways", "Passing allowed only on broken side", "No passing either side", "Road ends"],
+          answer: 1,
+          explanation: "Broken line on your side means you may pass when safe"
+        },
+        {
+          question: "This sign warns of:",
+          image: "../Images/dividedroad.png",
+          options: ["Road construction", "Divided highway begins", "Road narrows", "Two-way traffic"],
+          answer: 1,
+          explanation: "Yellow diamond with central divider indicates divided road ahead"
+        },
+        
+        // Warning Signs - Curves (4)
+        {
+          question: "What does this sign indicate?",
+          image: "../Images/curve.png",
+          options: ["Sharp curve ahead", "Winding road", "Turnaround point", "Road ends"],
+          answer: 0,
+          explanation: "Indicates degree and direction of upcoming curve"
+        },
+        {
+          question: "This sign means:",
+          image: "../Images/doublecurve.png",
+          options: ["Reverse curve ahead", "Double turn", "Switchbacks", "Roundabout"],
+          answer: 0,
+          explanation: "Warns of two opposite curves coming one after another"
+        },
+        {
+          question: "What does this sign warn about?",
+          image: "../Images/hairpin.png",
+          options: ["Steep hill", "Sharp U-turn", "Narrow road", "Low clearance"],
+          answer: 1,
+          explanation: "Indicates an extremely sharp reverse turn ahead"
+        },
+        {
+          question: "This sign indicates:",
+          image: "../Images/endofroad.png",
+          options: ["Dead end", "Road closed", "T-intersection ahead", "Freeway ends"],
+          answer: 2,
+          explanation: "Warns that the road will intersect with another road"
+        }
+      ],
+      scenario: [
+        // Original 5 questions
+        {
+          question: "You approach an intersection with flashing yellow light. What should you do?",
+          options: ["Speed up to cross quickly", "Stop completely", "Slow down and proceed with caution", "Ignore it"],
+          answer: 2,
+          explanation: "Flashing yellow means proceed with caution after yielding"
+        },
+        {
+          question: "Your e-bike starts skidding on wet pavement. What's your first action?",
+          options: ["Brake hard", "Steer into the skid", "Jump off", "Accelerate quickly"],
+          answer: 1,
+          explanation: "Steering into the skid helps regain control"
+        },
+        {
+          question: "A pedestrian steps onto the crossing when you're 5 meters away. You should:",
+          options: ["Honk and continue", "Stop immediately", "Swerve around them", "Speed up to cross first"],
+          answer: 1,
+          explanation: "Pedestrians have right of way at crossings"
+        },
+        {
+          question: "You're approaching this traffic situation. What's the safe action?",
+          options: ["Merge left quickly", "Slow down and check blind spots", "Honk and maintain speed", "Overtake on the right"],
+          answer: 1,
+          explanation: "Always check blind spots before intersection maneuvers"
+        },
+        {
+          question: "Your battery is low and you're 2km from destination. You should:",
+          options: ["Continue at full speed", "Switch to pedal-only", "Find charging station", "Call for tow"],
+          answer: 2,
+          explanation: "Plan routes with charging access to avoid being stranded"
+        },
+        
+        // Additional questions (total 20)
+        {
+          question: "You see emergency vehicles approaching with sirens. You should:",
+          options: ["Speed up to clear the way", "Pull over to the right and stop", "Ignore them if you have right of way", "Flash your lights to acknowledge"],
+          answer: 1,
+          explanation: "Always yield to emergency vehicles by pulling to the right"
+        },
+        {
+          question: "Your brakes feel less responsive going downhill. You should:",
+          options: ["Pump the brakes rapidly", "Use engine braking if available", "Pull the brake lever all the way", "Continue and hope they improve"],
+          answer: 1,
+          explanation: "Use both mechanical and engine braking for better control"
+        },
+        {
+          question: "You encounter a deep puddle across the road. Best action is:",
+          options: ["Speed through quickly", "Turn around and find another route", "Walk the bike through slowly", "Stop and wait for it to drain"],
+          answer: 2,
+          explanation: "Walking through ensures you don't flood electrical components"
+        },
+        {
+          question: "Another rider is tailgating you closely. You should:",
+          options: ["Brake suddenly to scare them", "Maintain speed and lane position", "Pull over and let them pass", "Wave them around impatiently"],
+          answer: 2,
+          explanation: "Safely allow faster riders to pass when possible"
+        },
+        {
+          question: "Your headlight fails at night. You should:",
+          options: ["Continue riding carefully", "Stop immediately and call for help", "Use your phone flashlight", "Ride close behind another vehicle"],
+          answer: 1,
+          explanation: "No lights make you invisible to others - stop riding"
+        },
+        {
+          question: "You drop your phone while riding. What's the safe response?",
+          options: ["Stop immediately to retrieve it", "Pull over when safe to retrieve", "Ignore it and keep riding", "Back up quickly to get it"],
+          answer: 1,
+          explanation: "Never make sudden stops or reverse in traffic lanes"
+        },
+        {
+          question: "A dog chases you while riding. Best action is:",
+          options: ["Speed up to outrun it", "Stop and put bike between you", "Kick at it while riding", "Swerve into traffic to avoid"],
+          answer: 1,
+          explanation: "Stopping often makes dogs lose interest"
+        },
+        {
+          question: "You feel a sudden loss of power while riding. First check:",
+          options: ["Battery charge level", "Tire pressure", "Brake adjustment", "Chain tension"],
+          answer: 0,
+          explanation: "Sudden power loss often indicates battery issues"
+        },
+        {
+          question: "Approaching a railroad crossing, you should:",
+          options: ["Speed up to cross quickly", "Stop and look both ways", "Ride diagonally across tracks", "Only stop if you see a train"],
+          answer: 1,
+          explanation: "Always treat railroad crossings with extra caution"
+        },
+        {
+          question: "Your turn signal stops working. You should:",
+          options: ["Use hand signals", "Not signal until fixed", "Flash headlights instead", "Only turn when no one's watching"],
+          answer: 0,
+          explanation: "Hand signals are legally required if lights fail"
+        },
+        {
+          question: "Riding in heavy rain, your visibility is poor. You should:",
+          options: ["Ride faster to get out of rain", "Pull over and wait it out", "Follow closer to see taillights", "Ride without glasses if wearing them"],
+          answer: 1,
+          explanation: "Reduced visibility significantly increases accident risk"
+        },
+        {
+          question: "Another rider falls ahead of you. You should:",
+          options: ["Stop to help if safe", "Continue riding to avoid congestion", "Call for help but keep riding", "Take pictures before helping"],
+          answer: 0,
+          explanation: "Always assist other riders when you can do so safely"
+        },
+        {
+          question: "Your throttle sticks in the open position. You should:",
+          options: ["Pull brake to override it", "Turn battery switch off", "Both of the above", "Jump off immediately"],
+          answer: 2,
+          explanation: "Cutting power is crucial for stuck throttle situations"
+        },
+        {
+          question: "You arrive at a 4-way stop simultaneously with another vehicle. Who goes first?",
+          options: ["The larger vehicle", "Whoever arrives slightly first", "The vehicle to your right", "Whoever gestures first"],
+          answer: 2,
+          explanation: "Right-of-way goes to the vehicle on your right at equal stops"
+        },
+        {
+          question: "Car doors start opening in bike lane ahead. You should:",
+          options: ["Ride closer to parked cars", "Slow down and prepare to stop", "Honk and maintain speed", "Swerve into traffic lane"],
+          answer: 1,
+          explanation: "Watch for door zones and be prepared to stop"
+        }
+      ]
+    };
+
+    // Game state
+    let currentGame = null;
+
+    // Load a question
     function loadQuestion() {
-      const q = questions[currentQuestion];
-      questionElement.textContent = q.question;
+      const questionElement = document.getElementById('question');
+      const optionsContainer = document.getElementById('options');
+      const progressBar = document.getElementById('progress-bar');
       
-      optionsElement.innerHTML = '';
-      q.options.forEach((option, index) => {
-        const button = document.createElement('div');
-        button.classList.add('option');
-        button.textContent = option;
-        button.addEventListener('click', () => selectOption(index));
-        optionsElement.appendChild(button);
+      if (!questionElement || !optionsContainer || !progressBar) return;
+      
+      // Fade out current question
+      questionElement.style.opacity = 0;
+      optionsContainer.style.opacity = 0;
+      
+      setTimeout(() => {
+        // Update question and options
+        questionElement.textContent = gameData[currentQuestion].question;
+        optionsContainer.innerHTML = '';
+        
+        if (gameData[currentQuestion].image) {
+          const img = document.createElement('img');
+          img.src = gameData[currentQuestion].image;
+          img.alt = 'Question image';
+          img.className = 'question-image';
+          questionElement.insertBefore(img, questionElement.firstChild);
+        }
+        
+        gameData[currentQuestion].options.forEach((option, index) => {
+          const button = document.createElement('button');
+          button.className = 'option-btn';
+          button.textContent = option;
+          button.onclick = () => selectOption(index);
+          optionsContainer.appendChild(button);
+        });
+        
+        // Update progress
+        document.getElementById('current-question').textContent = currentQuestion + 1;
+        progressBar.style.width = `${((currentQuestion + 1) / gameData.length) * 100}%`;
+        
+        // Fade in new question
+        questionElement.style.opacity = 1;
+        optionsContainer.style.opacity = 1;
+      }, 300);
+    }
+
+    // Select an option
+    function selectOption(selectedIndex) {
+      const options = document.querySelectorAll('.option-btn');
+      const correctIndex = gameData[currentQuestion].answer;
+      
+      options.forEach((option, index) => {
+        option.disabled = true;
+        if (index === correctIndex) {
+          option.classList.add('correct');
+        } else if (index === selectedIndex && selectedIndex !== correctIndex) {
+          option.classList.add('wrong');
+        }
       });
       
-      submitButton.style.display = 'block';
-      nextButton.style.display = 'none';
-      resultElement.style.display = 'none';
-      selectedOption = null;
-    }
-
-    function selectOption(index) {
-      const options = document.querySelectorAll('.option');
-      options.forEach(option => option.classList.remove('selected'));
-      options[index].classList.add('selected');
-      selectedOption = index;
-    }
-
-    function showResult(isCorrect) {
-      resultElement.style.display = 'block';
-      if (isCorrect) {
-        resultElement.textContent = 'Correct! ';
-        resultElement.style.color = '#10b981';
+      // Play sound
+      if (selectedIndex === correctIndex) {
+        playSound('correct');
+        score++;
       } else {
-        resultElement.textContent = 'Wrong! The correct answer was: ' + questions[currentQuestion].options[questions[currentQuestion].answer];
-        resultElement.style.color = '#ef4444';
+        playSound('wrong');
       }
       
-      submitButton.style.display = 'none';
-      nextButton.style.display = 'block';
+      document.getElementById('score').textContent = score;
+      
+      // Show explanation
+      setTimeout(() => {
+        const explanation = document.createElement('div');
+        explanation.className = 'explanation';
+        explanation.textContent = gameData[currentQuestion].explanation;
+        document.getElementById('quiz-container').appendChild(explanation);
+        
+        // Next question after delay
+        setTimeout(() => {
+          currentQuestion++;
+          if (currentQuestion < gameData.length) {
+            loadQuestion();
+          } else {
+            endGame();
+          }
+        }, 2000);
+      }, 1000);
     }
 
-    submitButton.addEventListener('click', () => {
-      if (selectedOption === null) return;
-      
-      const isCorrect = selectedOption === questions[currentQuestion].answer;
-      if (isCorrect) score++;
-      
-      showResult(isCorrect);
-    });
-
-    nextButton.addEventListener('click', () => {
+    // Next question
+    function nextQuestion() {
+      document.getElementById('feedback').style.display = 'none';
       currentQuestion++;
-      if (currentQuestion < questions.length) {
-        loadQuestion();
+      
+      if (currentQuestion < gameData.length) {
+        if (currentGame === 'signs') {
+          loadSignQuestion();
+        } else {
+          loadQuestion();
+        }
       } else {
-        quiz.innerHTML = `
-          <h2>Quiz Completed!</h2>
-          <p>Your score: ${score} out of ${questions.length}</p>
-          <button class="btn" onclick="location.reload()">Restart Quiz</button>
-        `;
+        endGame();
+      }
+    }
+
+    // End game
+    function endGame() {
+      playSound('win');
+      createConfetti();
+      
+      const quizContainer = document.getElementById('quiz-container');
+      const endScreen = document.getElementById('end-screen');
+      const finalScore = document.getElementById('final-score');
+      
+      if (quizContainer && endScreen && finalScore) {
+        finalScore.textContent = score;
+        quizContainer.style.display = 'none';
+        endScreen.style.display = 'block';
+        
+        // Add trophy animation class
+        const trophy = document.querySelector('.trophy');
+        if (trophy) trophy.classList.add('trophy-animation');
+      }
+    }
+
+    // Toggle dropdown (from header)
+    function toggleDropdown() {
+      const menu = document.getElementById("dropdown-menu");
+      menu.classList.toggle("show");
+    }
+
+    // Close dropdown if clicked outside
+    window.addEventListener("click", function(e) {
+      if (!e.target.closest('.user-profile')) {
+        const dropdowns = document.getElementsByClassName("dropdown-menu");
+        for (let i = 0; i <dropdowns.length; i++) {
+          if (dropdowns[i].classList.contains('show')) {
+            dropdowns[i].classList.remove('show');
+          }
+        }
       }
     });
 
-    loadQuestion();
+    // Back to games
+    function backToGames() {
+      const quizContainer = document.getElementById('quiz-container');
+      const gameSelection = document.getElementById('game-selection');
+      quizContainer.style.display = 'none';
+      gameSelection.style.display = 'block';
+    }
+
+    // Initialize when DOM loads
+    document.addEventListener('DOMContentLoaded', function() {
+      const gameSelection = document.getElementById('game-selection');
+      const quizContainer = document.getElementById('quiz-container');
+      
+      if (!gameSelection || !quizContainer) {
+        console.error('Game containers missing');
+        return;
+      }
+      
+      // Set up event handlers
+      document.querySelectorAll('.game-card, .btn-play').forEach(el => {
+        el.addEventListener('click', function(e) {
+          if (e.target.classList.contains('btn-play')) {
+            e.stopPropagation();
+          }
+          const type = this.closest('.game-card').getAttribute('data-quiz-type');
+          startQuiz(type);
+        });
+      });
+      
+      // Add play button hover sound
+      const playButtons = document.querySelectorAll('.btn-play');
+      
+      playButtons.forEach(button => {
+        button.addEventListener('mouseenter', () => {
+          if (typeof Audio !== 'undefined') {
+            const sound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3');
+            sound.volume = 0.2;
+            sound.play().catch(e => console.log('Sound play failed:', e));
+          }
+        });
+      });
+    });
+
+    // Add sound effects and confetti
+    function playSound(type) {
+      if (typeof Audio !== 'undefined') {
+        const sounds = {
+          correct: 'https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3',
+          wrong: 'https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3',
+          win: 'https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3'
+        };
+        const audio = new Audio(sounds[type]);
+        audio.volume = 0.3;
+        audio.play().catch(e => console.log('Audio playback failed:', e));
+      }
+    }
+    
+    function createConfetti() {
+      const colors = ['#f00', '#0f0', '#00f', '#ff0', '#f0f', '#0ff'];
+      const container = document.getElementById('quiz-container');
+      
+      for (let i = 0; i < 100; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.top = -10 + 'px';
+        confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+        container.appendChild(confetti);
+        
+        // Animate
+        setTimeout(() => {
+          confetti.style.opacity = 1;
+          confetti.style.top = '100%';
+          confetti.style.left = Math.random() * 100 + '%';
+          confetti.style.transition = `top ${Math.random() * 3 + 2}s linear, left ${Math.random() * 3 + 2}s linear`;
+          
+          // Remove after animation
+          setTimeout(() => confetti.remove(), 5000);
+        }, Math.random() * 1000);
+      }
+    }
   </script>
 </body>
 </html>
