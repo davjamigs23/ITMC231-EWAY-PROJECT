@@ -457,4 +457,70 @@ export async function getRecentRegistrations() {
   }
 }
 
+// Add showcase functions
+export async function addShowcaseItem(itemData) {
+  try {
+    const client = getClient();
+    const { data, error } = await client
+      .from('showcase_items')
+      .insert([itemData])
+      .select();
+    
+    if (error) throw error;
+    return data[0];
+  } catch (error) {
+    console.error('Add showcase item failed:', error);
+    throw error;
+  }
+}
+
+export async function updateShowcaseItem(id, itemData) {
+  try {
+    const client = getClient();
+    const { data, error } = await client
+      .from('showcase_items')
+      .update(itemData)
+      .eq('id', id)
+      .select();
+    
+    if (error) throw error;
+    return data[0];
+  } catch (error) {
+    console.error('Update showcase item failed:', error);
+    throw error;
+  }
+}
+
+export async function deleteShowcaseItem(id) {
+  try {
+    const client = getClient();
+    const { error } = await client
+      .from('showcase_items')
+      .delete()
+      .eq('id', id);
+    
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error('Delete showcase item failed:', error);
+    throw error;
+  }
+}
+
+export async function getShowcaseItems() {
+  try {
+    const client = getClient();
+    const { data, error } = await client
+      .from('showcase_items')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Get showcase items failed:', error);
+    throw error;
+  }
+}
+
 export { supabase };

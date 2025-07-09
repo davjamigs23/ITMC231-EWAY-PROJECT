@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>E-WAY | Branch Locator</title>
+  <title>E-WAY | E-Bike Service Centers</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
   <style>
     * {
       margin: 0; 
@@ -164,20 +166,109 @@
       line-height: 1.8;
     }
 
+    /* Improved Map Container */
     .map-container {
-      height: 500px;
-      width: 100%;
       border-radius: 16px;
       overflow: hidden;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-      margin-bottom: 3rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+      position: relative;
+      height: 600px; /* Fixed height for better consistency */
+    }
+
+    /* Custom Control Panel */
+    .map-controls {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: rgba(255,255,255,0.9);
+      padding: 10px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .map-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+      color: #10b981;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .map-btn:hover {
+      background: #10b981;
+      color: white;
+      transform: scale(1.1);
+    }
+
+    /* Disable default Leaflet controls */
+    .leaflet-control-container .leaflet-top.leaflet-left {
+      display: none;
+    }
+
+    #map {
+      height: 100%;
+      width: 100%;
+      background: #f5f7fa;
       position: relative;
     }
 
-    .map-container iframe {
-      width: 100%;
-      height: 100%;
+    /* Interactive Filter Buttons */
+    .filter-options {
+      display: flex;
+      gap: 12px;
+      margin: 1.5rem 0;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 10px 20px;
       border: none;
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: #f0f4f8;
+      color: #486581;
+      font-size: 14px;
+    }
+
+    .filter-btn.active {
+      background: #10b981;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .filter-btn:hover:not(.active) {
+      background: #d9e2ec;
+    }
+
+    /* Branch Cards */
+    .branch-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border-left: 4px solid #10b981;
+    }
+
+    .branch-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
     }
 
     .search-container {
@@ -223,52 +314,6 @@
       gap: 2rem;
     }
 
-    .branch-card {
-      background-color: white;
-      border-radius: 16px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-      padding: 2rem;
-      transition: all 0.4s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .branch-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 6px;
-      background: linear-gradient(90deg, #10b981, #3b82f6);
-      transition: 0.5s;
-    }
-
-    .branch-card:hover::before {
-      left: 0;
-    }
-
-    .branch-card:hover {
-      transform: translateY(-12px);
-      box-shadow: 0 15px 30px rgba(16, 185, 129, 0.15);
-    }
-
-    .branch-card h3 {
-      font-size: 1.6rem;
-      color: #113c23;
-      margin-bottom: 0.5rem;
-      transition: color 0.3s ease;
-    }
-
-    .branch-card:hover h3 {
-      color: #10b981;
-    }
-
-    .branch-card p {
-      color: #555;
-      margin-bottom: 0.5rem;
-    }
-
     .get-directions {
       display: inline-block;
       padding: 0.8rem 1.8rem;
@@ -312,6 +357,49 @@
       .branch-cards {
         grid-template-columns: 1fr;
       }
+    }
+
+    .location-filters {
+      margin-top: 2rem;
+      padding: 1rem;
+      background-color: #f7f7f7;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .filter-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .filter-btn {
+      padding: 0.5rem 1rem;
+      background-color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .filter-btn.active {
+      background-color: #10b981;
+      color: #fff;
+    }
+
+    .filter-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .branches-container {
+      margin-top: 2rem;
+    }
+
+    .branch-card {
+      margin-bottom: 2rem;
     }
   </style>
 </head>
@@ -370,53 +458,570 @@
   </header>
 
   <main>
-    <h1 class="main-title">Find Nearby LTO Branches</h1>
+    <h1 class="main-title">E-Bike Service Centers</h1>
     <p class="intro-text">
-      Find authorized LTO service centers and branches near you. Our nationwide network 
-      of certified locations provides maintenance, repairs, and support for all LTO e-bike models.
+      Find authorized E-WAY service centers and dealerships nationwide
     </p>
 
-    <div class="map-container">
-      <div id="map" style="height: 500px; background: #f0f0f0; display: flex; justify-content: center; align-items: center;">
-        <p style="font-size: 1.25rem; color: #4a5568;">Map loading...</p>
+    <section class="map-container">
+      <div id="map"></div>
+      <div class="map-controls">
+        <div class="map-btn" id="locate-btn" title="Locate Me">
+          <i class="fas fa-location-arrow"></i>
+        </div>
+        <div class="map-btn" id="zoom-in-btn" title="Zoom In">
+          <i class="fas fa-plus"></i>
+        </div>
+        <div class="map-btn" id="zoom-out-btn" title="Zoom Out">
+          <i class="fas fa-minus"></i>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <div class="search-container">
-      <input type="text" class="search-input" placeholder="Enter your location..." />
-      <button class="search-btn">Search</button>
-    </div>
-
-    <h2 style="font-size: 1.8rem; color: #113c23; margin-bottom: 1.5rem;">Nearest Branches</h2>
-    
-    <div class="branch-cards">
-      <div class="branch-card">
-        <h3>LTO Main Office - Quezon City</h3>
-        <p>East Avenue, Diliman</p>
-        <p>Mon-Fri: 8AM-5PM</p>
-        <a href="#" class="get-directions">Get Directions</a>
+    <section class="branch-list">
+      <h2>Our E-Bike Branches</h2>
+      <div class="branches-container" id="branches-container">
+        <!-- Branch cards will be dynamically inserted here -->
       </div>
-      
-      <div class="branch-card">
-        <h3>LTO Branch - Makati City</h3>
-        <p>Ayala Avenue, Makati</p>
-        <p>Mon-Fri: 8AM-5PM</p>
-        <a href="#" class="get-directions">Get Directions</a>
-      </div>
-      
-      <div class="branch-card">
-        <h3>LTO Branch - Manila City</h3>
-        <p>Rizal Avenue, Manila</p>
-        <p>Mon-Fri: 8AM-5PM</p>
-        <a href="#" class="get-directions">Get Directions</a>
-      </div>
-    </div>
+    </section>
   </main>
 
-  <footer>
-    <p class="copyright">Copyright 2025. All rights reserved.</p>
-  </footer>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const branches = [
+      {
+        id: 1,
+        name: "E-WAY Flagship Store - Makati",
+        description: "Our flagship store in Greenbelt 3 offers the complete E-WAY experience with all models available for test rides, premium accessories, and expert consultations. Features include a coffee lounge and VR configurator.",
+        features: ["Full model lineup", "VR configuration station", "Coffee lounge", "Test ride track"],
+        address: "G/F Greenbelt 3, Ayala Center, Makati City",
+        contact: "(02) 8888-0001",
+        hours: "Mon-Sun: 10AM-9PM",
+        services: ["sales", "test rides", "accessories", "warranty"],
+        type: "sales",
+        coords: { lat: 14.5547, lng: 121.0244 },
+        photo: "https://images.unsplash.com/photo-1558981806-ec527fa84c39?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=300&q=80",
+        directions: "https://www.google.com/maps/dir/?api=1&destination=Greenbelt+3,Ayala+Center,Makati"
+      },
+      {
+        id: 2,
+        name: "E-WAY Service Center - Quezon City",
+        description: "Our service center in Quezon City offers expert maintenance and repair services for all E-WAY models. Our team of certified technicians will ensure your bike is running smoothly and efficiently.",
+        features: ["Expert maintenance", "Certified technicians", "Quick turnaround"],
+        address: "123 E-WAY Bldg., East Ave, Diliman, QC",
+        contact: "(02) 8888-0002",
+        hours: "Mon-Sat: 8AM-6PM",
+        services: ["repairs", "maintenance", "battery check"],
+        type: "service",
+        coords: { lat: 14.6187, lng: 121.0500 },
+        photo: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=300&q=80",
+        directions: "https://www.google.com/maps/dir/?api=1&destination=East+Avenue,Diliman,Quezon+City"
+      },
+  
+      // Luzon Branches
+      {
+        id: 3,
+        name: "E-WAY Pampanga",
+        description: "Our dealership in Pampanga offers a wide range of E-WAY models, including the latest releases. Our knowledgeable staff will help you find the perfect bike for your needs.",
+        features: ["Wide model selection", "Knowledgeable staff", "Test ride availability"],
+        address: "SM City Pampanga, San Fernando",
+        contact: "(045) 888-0003",
+        hours: "Mon-Sun: 10AM-8PM",
+        services: ["sales", "accessories", "test rides"],
+        type: "sales",
+        coords: { lat: 15.0419, lng: 120.6683 },
+        photo: "https://images.unsplash.com/photo-1558981806-ec527fa84c39?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=300&q=80",
+        directions: "https://www.google.com/maps/dir/?api=1&destination=SM+City+Pampanga,Jose+Abad+Santos+Av,San+Fernando,Pampanga"
+      },
+      {
+        id: 4,
+        name: "E-WAY Baguio",
+        description: "Our dealership in Baguio offers a unique E-WAY experience, with a focus on outdoor activities and adventure. Our staff will help you find the perfect bike for your next adventure.",
+        features: ["Outdoor activities", "Adventure focus", "Expert staff"],
+        address: "Session Road, Baguio City",
+        contact: "(074) 888-0004",
+        hours: "Mon-Sat: 9AM-7PM",
+        services: ["sales", "service", "rentals"],
+        type: "sales",
+        coords: { lat: 16.4158, lng: 120.5937 },
+        photo: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=300&q=80",
+        directions: "https://www.google.com/maps/dir/?api=1&destination=Session+Road,Baguio+City"
+      },
+  
+      // Visayas Branches
+      {
+        id: 5,
+        name: "E-WAY Cebu",
+        description: "Our dealership in Cebu offers a wide range of E-WAY models, including the latest releases. Our knowledgeable staff will help you find the perfect bike for your needs.",
+        features: ["Wide model selection", "Knowledgeable staff", "Test ride availability"],
+        address: "Ayala Center Cebu, Cebu City",
+        contact: "(032) 888-0005",
+        hours: "Mon-Sun: 10AM-8PM",
+        services: ["sales", "service", "parts"],
+        type: "sales",
+        coords: { lat: 10.3187, lng: 123.9054 },
+        photo: "https://images.unsplash.com/photo-1558981806-ec527fa84c39?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=300&q=80",
+        directions: "https://www.google.com/maps/dir/?api=1&destination=Ayala+Center+Cebu,Cebu+Business+Park,Cebu+City"
+      },
+      {
+        id: 6,
+        name: "E-WAY Iloilo Service Center",
+        description: "Our service center in Iloilo offers expert maintenance and repair services for all E-WAY models. Our team of certified technicians will ensure your bike is running smoothly and efficiently.",
+        features: ["Expert maintenance", "Certified technicians", "Quick turnaround"],
+        address: "Mandurriao, Iloilo City",
+        contact: "(033) 888-0006",
+        hours: "Mon-Fri: 9AM-6PM",
+        services: ["repairs", "maintenance", "battery check"],
+        type: "service",
+        coords: { lat: 10.7202, lng: 122.5621 },
+        photo: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=300&q=80",
+        directions: "https://www.google.com/maps/dir/?api=1&destination=Mandurriao,Iloilo+City"
+      },
+  
+      // Mindanao Branches
+      {
+        id: 7,
+        name: "E-WAY Davao",
+        description: "Our dealership in Davao offers a wide range of E-WAY models, including the latest releases. Our knowledgeable staff will help you find the perfect bike for your needs.",
+        features: ["Wide model selection", "Knowledgeable staff", "Test ride availability"],
+        address: "SM Lanang Premier, Davao City",
+        contact: "(082) 888-0007",
+        hours: "Mon-Sun: 10AM-8PM",
+        services: ["sales", "accessories", "test rides"],
+        type: "sales",
+        coords: { lat: 7.1195, lng: 125.6189 },
+        photo: "https://images.unsplash.com/photo-1558981806-ec527fa84c39?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=300&q=80",
+        directions: "https://www.google.com/maps/dir/?api=1&destination=SM+Lanang+Premier,J.P.+Laurel+Av,Davao+City"
+      },
+      {
+        id: 8,
+        name: "E-WAY Cagayan de Oro",
+        description: "Our dealership in Cagayan de Oro offers a unique E-WAY experience, with a focus on outdoor activities and adventure. Our staff will help you find the perfect bike for your next adventure.",
+        features: ["Outdoor activities", "Adventure focus", "Expert staff"],
+        address: "Limketkai Center, CDO",
+        contact: "(088) 888-0008",
+        hours: "Mon-Sat: 10AM-7PM",
+        services: ["sales", "service", "rentals"],
+        type: "sales",
+        coords: { lat: 8.4767, lng: 124.6439 },
+        photo: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=300&q=80",
+        directions: "https://www.google.com/maps/dir/?api=1&destination=Limketkai+Center,Cagayan+de+Oro"
+      },
+  
+      // Specialized Centers
+      {
+        id: 9,
+        name: "E-WAY Technical Training Center",
+        description: "Our technical training center in Mandaluyong offers advanced training programs for E-WAY technicians and enthusiasts. Our expert instructors will help you improve your skills and knowledge.",
+        features: ["Advanced training programs", "Expert instructors", "Hands-on training"],
+        address: "Shaw Blvd, Mandaluyong",
+        contact: "(02) 8888-0009",
+        hours: "Mon-Fri: 8AM-5PM",
+        services: ["technician training", "advanced repairs"],
+        type: "service",
+        coords: { lat: 14.5816, lng: 121.0460 },
+        photo: "https://images.unsplash.com/photo-1558981806-ec527fa84c39?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=300&q=80",
+        directions: "https://www.google.com/maps/dir/?api=1&destination=Shaw+Blvd,Mandaluyong"
+      },
+      {
+        id: 10,
+        name: "E-WAY Battery Center",
+        description: "Our battery center in Ortigas offers expert battery replacement and repair services for all E-WAY models. Our team of certified technicians will ensure your bike is running smoothly and efficiently.",
+        features: ["Expert battery replacement", "Certified technicians", "Quick turnaround"],
+        address: "Ortigas Center, Pasig",
+        contact: "(02) 8888-0010",
+        hours: "Mon-Sat: 9AM-6PM",
+        services: ["battery replacement", "repairs", "recycling"],
+        type: "warranty",
+        coords: { lat: 14.5890, lng: 121.0753 },
+        photo: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=300&q=80",
+        directions: "https://www.google.com/maps/dir/?api=1&destination=Ortigas+Center,Pasig"
+      }
+    ];
 
-  <script src="../Scripts/locations.js"></script>
+    // Enhanced map initialization
+    async function initMap() {
+      // Create map with better defaults
+      map = L.map('map', {
+        zoomControl: false,
+        preferCanvas: true, // Better performance
+        fadeAnimation: true,
+        zoomSnap: 0.5,
+        wheelPxPerZoomLevel: 60
+      }).setView([12.8797, 121.7740], 6);
+
+      // Add high-quality tile layer with retina support
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 19,
+        detectRetina: true
+      }).addTo(map);
+
+      // Add scale control
+      L.control.scale({ position: 'bottomleft' }).addTo(map);
+
+      // Add custom geolocation control with better accuracy
+      map.on('locationfound', (e) => {
+        const radius = e.accuracy / 2;
+        L.circle(e.latlng, radius, {
+          color: '#10b981',
+          fillColor: '#10b981',
+          fillOpacity: 0.2,
+          weight: 2
+        }).addTo(map);
+        
+        if (!userLocationMarker) {
+          userLocationMarker = L.circleMarker(e.latlng, {
+            radius: 8,
+            color: '#10b981',
+            fillColor: '#ffffff',
+            fillOpacity: 1,
+            weight: 3
+          }).addTo(map);
+        } else {
+          userLocationMarker.setLatLng(e.latlng);
+        }
+      });
+
+      // Handle geolocation errors
+      map.on('locationerror', (e) => {
+        console.log('Geolocation error:', e.message);
+        alert('Unable to find your location. Please ensure location services are enabled.');
+      });
+
+      // Add smooth zoom transitions
+      map.on('zoomanim', (e) => {
+        map.flyTo(e.center, e.zoom, {
+          duration: 0.5,
+          easeLinearity: 0.25
+        });
+      });
+
+      // Initialize markers and controls
+      updateMapMarkers(branches);
+      setupMapControls();
+    }
+
+    // Add page load animations
+    document.addEventListener('DOMContentLoaded', initMap);
+
+    // Initialize map and display branches
+    let map;
+    let markers = [];
+
+    async function getTravelTime(origin, destination) {
+      try {
+        const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin.lat},${origin.lng}&destinations=${destination.lat},${destination.lng}&key=YOUR_GOOGLE_MAPS_API_KEY`);
+        const data = await response.json();
+        if (data.rows[0].elements[0].status === 'OK') {
+          return data.rows[0].elements[0].duration.text;
+        }
+      } catch (error) {
+        console.error('Error getting travel time:', error);
+      }
+      return 'Time unavailable';
+    }
+
+    function generateShareLink(branch, currentLocation) {
+      const url = `${window.location.origin}${window.location.pathname}?branch=${branch.id}`;
+      const text = `Check out ${branch.name} at ${branch.address}. Estimated travel time: ${currentLocation ? currentLocation.travelTime : ''}`;
+      return {
+        whatsapp: `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`,
+        facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`,
+        twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
+        copy: url
+      };
+    }
+
+    function updateMapMarkers(filteredBranches) {
+      markers.forEach(marker => map.removeLayer(marker));
+      markers = [];
+      
+      filteredBranches.forEach(async branch => {
+        let travelTime = 'Calculating...';
+        
+        // Get user's location if available
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(async position => {
+            const origin = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+            travelTime = await getTravelTime(origin, branch.coords);
+            
+            // Update popup with travel time
+            const popup = marker.getPopup();
+            if (popup) {
+              popup.setContent(createPopupContent(branch, travelTime));
+            }
+          });
+        }
+        
+        const marker = L.marker([branch.coords.lat, branch.coords.lng], {
+          icon: createMarkerIcon(branch.id)
+        }).addTo(map).bindPopup(createPopupContent(branch, travelTime));
+        
+        markers.push(marker);
+      });
+    }
+
+    function createMarkerIcon(branchId) {
+      return L.divIcon({
+        html: `<div style="background:#10b981; color:white; border-radius:50%; 
+                width:30px; height:30px; display:flex; align-items:center; 
+                justify-content:center; font-weight:bold;">${branchId}</div>`
+      });
+    }
+
+    function createPopupContent(branch, travelTime) {
+      const shareLinks = generateShareLink(branch, { travelTime });
+      
+      return `
+        <div style="max-width: 300px;">
+          <img src="${branch.photo}" style="width:100%; height:150px; object-fit:cover; border-radius:8px 8px 0 0;">
+          <div style="padding:12px;">
+            <h4 style="margin:0 0 8px 0; color:#113c23;">${branch.name}</h4>
+            ${travelTime ? `<p style="margin:0 0 6px 0; font-size:14px; background:#e6fffa; padding:4px; border-radius:4px;">
+              <i class="fas fa-car" style="color:#10b981;"></i> 
+              Estimated travel time: ${travelTime}
+            </p>` : ''}
+            
+            <!-- Detailed Description -->
+            <div style="margin:8px 0; font-size:13px; color:#486581;">
+              <p>${branch.description}</p>
+              ${branch.features ? `<div style="margin-top:8px;">
+                <strong>Features:</strong>
+                <ul style="padding-left:16px; margin-top:4px;">
+                  ${branch.features.map(f => `<li>${f}</li>`).join('')}
+                </ul>
+              </div>` : ''}
+            </div>
+            
+            <!-- Contact Info -->
+            <p style="margin:0 0 6px 0; font-size:14px;">
+              <i class="fas fa-map-marker-alt" style="color:#10b981;"></i> 
+              ${branch.address}
+            </p>
+            <p style="margin:0 0 6px 0; font-size:14px;">
+              <i class="fas fa-phone" style="color:#10b981;"></i> 
+              ${branch.contact}
+            </p>
+            <p style="margin:0 0 6px 0; font-size:14px;">
+              <i class="fas fa-clock" style="color:#10b981;"></i> 
+              ${branch.hours}
+            </p>
+            
+            <!-- Action Buttons -->
+            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+              <a href="${branch.directions}" target="_blank" 
+                 style="flex:1; text-align:center; background:#10b981; color:white; 
+                        padding:8px; border-radius:4px; text-decoration:none;">
+                <i class="fas fa-directions"></i> Directions
+              </a>
+              <button onclick="saveLocation(${branch.id})" 
+                      style="flex:1; text-align:center; background:#3b82f6; color:white; 
+                             border:none; padding:8px; border-radius:4px; cursor:pointer;">
+                <i class="fas fa-bookmark"></i> Save
+              </button>
+            </div>
+            
+            <!-- Share Options -->
+            <div style="position:relative;">
+              <button onclick="this.nextElementSibling.classList.toggle('show-share')" 
+                      style="width:100%; background:#f0f4f8; border:none; padding:8px; 
+                             border-radius:4px; cursor:pointer;">
+                <i class="fas fa-share-alt"></i> Share Location
+              </button>
+              <div class="share-options" style="position:absolute; bottom:100%; left:0; right:0; 
+                    background:white; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.15); 
+                    padding:12px; display:none; z-index:1000;">
+                <a href="${shareLinks.whatsapp}" target="_blank" style="display:block; padding:8px; 
+                   text-decoration:none; color:#486581;">
+                  <i class="fab fa-whatsapp" style="color:#25D366;"></i> WhatsApp
+                </a>
+                <a href="${shareLinks.facebook}" target="_blank" style="display:block; padding:8px; 
+                   text-decoration:none; color:#486581;">
+                  <i class="fab fa-facebook" style="color:#4267B2;"></i> Facebook
+                </a>
+                <a href="${shareLinks.twitter}" target="_blank" style="display:block; padding:8px; 
+                   text-decoration:none; color:#486581;">
+                  <i class="fab fa-twitter" style="color:#1DA1F2;"></i> Twitter
+                </a>
+                <button onclick="navigator.clipboard.writeText('${shareLinks.copy}'); 
+                             alert('Link copied to clipboard!');" 
+                    style="width:100%; text-align:left; background:none; border:none; 
+                           padding:8px; cursor:pointer; color:#486581;">
+                  <i class="fas fa-copy"></i> Copy Link
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function saveLocation(branchId) {
+      const branch = branches.find(b => b.id === branchId);
+      if (!branch) return;
+      
+      // Get existing saved locations or initialize array
+      const savedLocations = JSON.parse(localStorage.getItem('savedLocations') || '[]');
+      
+      // Check if already saved
+      const existingIndex = savedLocations.findIndex(loc => loc.id === branchId);
+      if (existingIndex >= 0) {
+        const notes = prompt('Update your notes for this location:', savedLocations[existingIndex].notes || '');
+        if (notes !== null) {
+          savedLocations[existingIndex].notes = notes;
+          savedLocations[existingIndex].updatedAt = new Date().toISOString();
+          localStorage.setItem('savedLocations', JSON.stringify(savedLocations));
+          alert('Notes updated successfully!');
+        }
+        return;
+      }
+      
+      // Add new location with notes
+      const notes = prompt('Add optional notes for this location:');
+      savedLocations.push({
+        id: branch.id,
+        name: branch.name,
+        address: branch.address,
+        photo: branch.photo,
+        notes: notes || '',
+        savedAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+      
+      localStorage.setItem('savedLocations', JSON.stringify(savedLocations));
+      alert(`${branch.name} has been saved to your favorites!`);
+    }
+
+    function removeLocation(branchId) {
+      const savedLocations = JSON.parse(localStorage.getItem('savedLocations') || '[]');
+      const updatedLocations = savedLocations.filter(loc => loc.id !== branchId);
+      
+      if (updatedLocations.length < savedLocations.length) {
+        localStorage.setItem('savedLocations', JSON.stringify(updatedLocations));
+        alert('Location removed from your saved locations!');
+        return true;
+      }
+      return false;
+    }
+
+    function setupFilterButtons() {
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          // Update active button
+          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          
+          // Filter branches
+          const filter = this.dataset.filter;
+          const filtered = filter === 'all' 
+            ? branches 
+            : branches.filter(b => b.type === filter);
+          
+          // Update display
+          displayBranches(filtered);
+          updateMapMarkers(filtered);
+          
+          // Adjust map view if filtered
+          if (filtered.length > 0 && filter !== 'all') {
+            const bounds = L.latLngBounds(filtered.map(b => [b.coords.lat, b.coords.lng]));
+            map.fitBounds(bounds, { padding: [50, 50] });
+          }
+        });
+      });
+    }
+
+    function setupMapControls() {
+      // Locate button
+      document.getElementById('locate-btn').addEventListener('click', () => {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(position => {
+            map.setView([position.coords.latitude, position.coords.longitude], 13);
+          });
+        }
+      });
+      
+      // Zoom buttons (now only on right side)
+      document.getElementById('zoom-in-btn').addEventListener('click', () => {
+        map.zoomIn();
+      });
+      
+      document.getElementById('zoom-out-btn').addEventListener('click', () => {
+        map.zoomOut();
+      });
+    }
+
+    // Display branches in list and map
+    function displayBranches(branches) {
+      const container = document.getElementById('branches-container');
+      container.innerHTML = branches.map(branch => `
+        <div class="branch-card" data-type="${branch.type}">
+          <img src="${branch.photo}" alt="${branch.name}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 12px 12px 0 0;">
+          <h3>${branch.name}</h3>
+          <p class="branch-address">${branch.address}</p>
+          <p class="branch-contact">${branch.contact}</p>
+          <p class="branch-hours">${branch.hours}</p>
+          <div class="branch-services">
+            Services: ${branch.services.join(', ')}
+          </div>
+          <a href="${branch.directions}" class="get-directions">Get Directions</a>
+        </div>
+      `).join('');
+    }
+
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', initMap);
+
+    // Add smooth scroll to map when clicking branch cards
+    document.querySelectorAll('.branch-card').forEach(card => {
+      card.addEventListener('click', function() {
+        const branchId = parseInt(this.dataset.branchId);
+        const branch = branches.find(b => b.id === branchId);
+        if (branch) {
+          map.flyTo([branch.coords.lat, branch.coords.lng], 14, {
+            duration: 0.75,
+            easeLinearity: 0.25
+          });
+          
+          // Highlight corresponding marker
+          const marker = markers.find(m => m.options.icon.options.branchId === branchId);
+          if (marker) {
+            marker.openPopup();
+            marker.setIcon(createMarkerIcon(branchId, true));
+            setTimeout(() => {
+              marker.setIcon(createMarkerIcon(branchId));
+            }, 2000);
+          }
+        }
+      });
+    });
+
+    // Update marker creation to include branchId
+    function createMarkerIcon(branchId, highlighted = false) {
+      return L.divIcon({
+        html: `<div style="background:${highlighted ? '#ef4444' : '#10b981'}; 
+                      color:white; 
+                      width:28px; 
+                      height:28px; 
+                      border-radius:50%; 
+                      display:flex; 
+                      align-items:center; 
+                      justify-content:center; 
+                      font-weight:bold;">
+               ${branchId}
+             </div>`,
+        className: '',
+        iconSize: [28, 28],
+        branchId: branchId
+      });
+    }
+  </script>
+  <style>
+    .share-options.show-share { display: block !important; }
+    .share-options a:hover, .share-options button:hover { background: #f0f4f8 !important; }
+  </style>
 </body>
 </html>

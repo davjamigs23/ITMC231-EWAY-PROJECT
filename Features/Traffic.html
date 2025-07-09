@@ -1,24 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>E-WAY | Traffic Alerts</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-WAY | Naga City Traffic Alerts</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary-color: #0f5132;
+      --secondary-color: #e9c5c0;
+      --accent-color: #c2410c;
+      --light-bg: #f8f9fa;
+      --dark-text: #1e293b;
+      --light-text: #f8fafc;
+    }
+
     * {
-      margin: 0; 
-      padding: 0; 
+      margin: 0;
+      padding: 0;
       box-sizing: border-box;
       font-family: 'Poppins', sans-serif;
     }
 
     body {
-      background-color: #ffffff;
-      color: #113c23;
-      line-height: 1.6;
+      background: linear-gradient(to right, #e7beb5, #c5efea);
+      color: var(--dark-text);
+      min-height: 100vh;
     }
 
+    /* Header Styles */
     header {
       display: flex;
       justify-content: space-between;
@@ -29,7 +41,6 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      transition: all 0.3s ease;
     }
 
     nav {
@@ -39,7 +50,7 @@
 
     nav a {
       text-decoration: none;
-      color: #333;
+      color: #113c23;
       font-weight: 400;
       font-size: 17px;
       transition: color 0.3s;
@@ -47,7 +58,7 @@
     }
 
     nav a:hover {
-      color: #4C9444;
+      color: var(--primary-color);
     }
 
     nav a::after {
@@ -57,7 +68,7 @@
       height: 2px;
       bottom: -5px;
       left: 0;
-      background-color: #4C9444;
+      background-color: var(--primary-color);
       transition: width 0.3s;
     }
 
@@ -79,267 +90,219 @@
       cursor: pointer;
       border: 2px solid #fff;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-      transition: all 0.3s ease;
     }
 
-    .user-profile img:hover {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    }
-
+    /* User Profile Dropdown */
     .dropdown-menu {
-      position: absolute;
-      top: 60px;
-      right: 0;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
       display: none;
-      flex-direction: column;
-      min-width: 150px;
+      position: absolute;
+      right: 0;
+      top: 70px;
+      background: white;
+      min-width: 200px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      border-radius: 8px;
       z-index: 1000;
-      overflow: hidden;
-      animation: fadeIn 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+      flex-direction: column;
+      padding: 10px 0;
     }
 
     .dropdown-menu a {
-      padding: 12px 16px;
+      padding: 10px 20px;
+      color: var(--dark-text);
       text-decoration: none;
-      color: #113c23;
-      font-size: 14px;
-      transition: all 0.3s ease;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
     .dropdown-menu a:hover {
-      background: #f0f9f6;
-      color: #10b981;
-      padding-left: 20px;
+      background: #f0fdf4;
+      color: var(--primary-color);
     }
 
-    main {
-      padding: 3rem 2rem;
+    .dropdown-menu a i {
+      width: 20px;
+      text-align: center;
+    }
+
+    .dropdown-menu.show {
+      display: flex;
+    }
+
+    /* Active Nav Link */
+    nav a.active {
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+
+    nav a.active::after {
+      width: 100%;
+    }
+
+    /* Main Content Styles */
+    .container {
       max-width: 1200px;
-      margin: 0 auto;
-      animation: pageLoad 0.5s ease;
+      margin: 2rem auto;
+      padding: 0 2rem;
+      animation: fadeIn 0.5s ease;
     }
 
-    @keyframes pageLoad {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
     .main-title {
-      font-size: 2.5rem;
-      color: #113c23;
+      font-size: 2rem;
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
       text-align: center;
-      margin-bottom: 2rem;
-      position: relative;
     }
 
-    .main-title::after {
-      content: '';
-      display: block;
-      width: 80px;
-      height: 4px;
-      background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
-      margin: 15px auto;
-      border-radius: 3px;
-      transition: width 0.3s ease;
+    .traffic-container {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 2rem;
     }
 
-    .main-title:hover::after {
-      width: 120px;
+    .map-container {
+      height: 500px;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
     }
 
-    .intro-text {
-      text-align: center;
-      font-size: 1.2rem;
-      color: #555;
-      max-width: 800px;
-      margin: 0 auto 3rem;
-      line-height: 1.8;
-    }
-
-    .filters-container {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-    }
-
-    .filter-group {
-      flex: 1;
-      min-width: 200px;
-    }
-
-    .filter-label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-      color: #113c23;
-    }
-
-    .filter-select {
+    #traffic-map {
+      height: 100%;
       width: 100%;
-      padding: 0.8rem;
-      border: 1px solid #ddd;
+    }
+
+    .traffic-controls {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .control-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .control-group h3 {
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    .traffic-button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.75rem;
+      background: var(--primary-color);
+      color: white;
+      border: none;
       border-radius: 8px;
-      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
       transition: all 0.3s ease;
     }
 
-    .filter-select:focus {
-      outline: none;
-      border-color: #10b981;
-      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    .traffic-button:hover {
+      background: #0d4530;
+      transform: translateY(-2px);
     }
 
-    .alerts-container {
+    .traffic-button.active {
+      background: var(--accent-color);
+    }
+
+    .traffic-incidents {
+      max-height: 300px;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+    }
+
+    .incident-item {
+      padding: 1rem;
+      margin-bottom: 1rem;
+      background: #f0fdf4;
+      border-radius: 8px;
+      border-left: 4px solid var(--primary-color);
+      transition: all 0.3s ease;
+    }
+
+    .incident-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .incident-item h4 {
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+
+    .incident-item .time {
+      color: #64748b;
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
+    }
+
+    .traffic-legend {
       display: grid;
-      gap: 1.5rem;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      margin-top: 1.5rem;
     }
 
-    .alert-card {
-      background-color: white;
-      border-radius: 16px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-      padding: 1.5rem;
-      transition: all 0.4s ease;
-      position: relative;
-      overflow: hidden;
-      border-left: 6px solid #f59e0b;
-    }
-
-    .alert-card.high {
-      border-left-color: #ef4444;
-    }
-
-    .alert-card.low {
-      border-left-color: #10b981;
-    }
-
-    .alert-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 6px;
-      background: linear-gradient(90deg, #10b981, #3b82f6);
-      transition: 0.5s;
-    }
-
-    .alert-card:hover::before {
-      left: 0;
-    }
-
-    .alert-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 15px 30px rgba(16, 185, 129, 0.15);
-    }
-
-    .alert-header {
+    .legend-item {
       display: flex;
-      justify-content: space-between;
-      margin-bottom: 0.5rem;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.8rem;
+      text-align: center;
     }
 
-    .alert-title {
-      font-size: 1.4rem;
-      color: #113c23;
-      transition: color 0.3s ease;
+    .legend-color {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
     }
 
-    .alert-card:hover .alert-title {
-      color: #10b981;
+    /* Footer Styles */
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      color: #64748b;
+      font-size: 0.9rem;
     }
 
-    .alert-severity {
-      background: #f59e0b;
-      color: white;
-      padding: 0.25rem 0.75rem;
-      border-radius: 1rem;
-      font-size: 0.875rem;
-      font-weight: 500;
-    }
-
-    .alert-severity.high {
-      background: #ef4444;
-    }
-
-    .alert-severity.low {
-      background: #10b981;
-    }
-
-    .alert-location {
-      color: #555;
-      margin-bottom: 0.5rem;
-    }
-
-    .alert-time {
-      color: #777;
-      font-size: 0.875rem;
-    }
-
+    /* Responsive Design */
     @media (max-width: 768px) {
-      header {
-        flex-direction: column;
-        padding: 15px;
+      .traffic-container {
+        grid-template-columns: 1fr;
       }
-      
+
+      header {
+        padding: 15px;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
       nav {
         flex-wrap: wrap;
         justify-content: center;
-        gap: 1rem;
-        margin-top: 1rem;
-        margin-bottom: 1rem;
-      }
-
-      .filters-container {
-        flex-direction: column;
-      }
-
-      .filter-group {
-        width: 100%;
       }
     }
   </style>
 </head>
 <body>
-  <script>
-    function toggleDropdown() {
-      const menu = document.getElementById("dropdown-menu");
-      menu.style.display = (menu.style.display === "flex") ? "none" : "flex";
-    }
-
-    window.addEventListener("click", function (e) {
-      const dropdown = document.getElementById("dropdown-menu");
-      const profile = document.querySelector(".user-profile img");
-      if (!profile.contains(e.target)) {
-        dropdown.style.display = "none";
-      }
-    });
-
-    // Add page load animations
-    document.addEventListener("DOMContentLoaded", function() {
-      // Stagger animation for alert cards
-      const alerts = document.querySelectorAll('.alert-card');
-      alerts.forEach((alert, index) => {
-        alert.style.opacity = '0';
-        alert.style.transform = 'translateY(20px)';
-        setTimeout(() => {
-          alert.style.transition = 'all 0.5s ease';
-          alert.style.opacity = '1';
-          alert.style.transform = 'translateY(0)';
-        }, 300 + (index * 100));
-      });
-    });
-  </script>
-
   <header>
     <nav>
       <a href="../Homepage/HomepageWithAccount.html">Home</a>
@@ -347,14 +310,14 @@
       <a href="../Maintenance/Maintenance_Main.html">Maintenance</a>
       <a href="../Showcase/ShowcaseWithAccount.html">Showcase</a>
       <a href="../Registration/registration.html">Registration</a>
-      <a href="../Features/Locations.html">Branch Locator</a>
+      <a href="Locations.html">Branch Locator</a>
       <a href="Traffic.html" class="active">Traffic Alerts</a>
-      <a href="../Features/Forum.html">Rider Forum</a>
-      <a href="../Features/Quiz.html">Safety Quiz</a>
+      <a href="Forum.html">Rider Forum</a>
+      <a href="Quiz.html">Safety Quiz</a>
     </nav>
     
     <div class="user-profile">
-      <img src="../Images/User Logo.png" alt="User Profile" onclick="toggleDropdown()" />
+      <img src="../Images/User Logo.png" alt="User Profile" onclick="toggleDropdown()">
       <div id="dropdown-menu" class="dropdown-menu">
         <a href="../User Profile/Profile.html"><i class="fas fa-user"></i> Profile Settings</a>
         <a href="../User Profile/Contact.html"><i class="fas fa-envelope"></i> Contact</a>
@@ -363,70 +326,200 @@
     </div>
   </header>
 
-  <main>
-    <h1 class="main-title">Live Traffic Updates</h1>
-    <p class="intro-text">
-      Stay informed about current traffic conditions in your area. Our real-time updates help you 
-      plan the safest and most efficient routes for your e-bike journeys.
-    </p>
-
-    <div class="filters-container">
-      <div class="filter-group">
-        <label class="filter-label">Area</label>
-        <select class="filter-select">
-          <option value="all">All Areas</option>
-          <option value="metro-manila">Metro Manila</option>
-          <option value="luzon">Luzon</option>
-          <option value="visayas">Visayas</option>
-          <option value="mindanao">Mindanao</option>
-        </select>
+  <div class="container">
+    <h1 class="main-title">Naga City Traffic Alerts</h1>
+    
+    <div class="traffic-container">
+      <div class="map-container">
+        <div id="traffic-map"></div>
       </div>
-      
-      <div class="filter-group">
-        <label class="filter-label">Severity</label>
-        <select class="filter-select">
-          <option value="all">All Severities</option>
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-        </select>
+
+      <div class="traffic-controls">
+        <div class="control-group">
+          <h3>Map Options</h3>
+          <button id="traffic-layer-btn" class="traffic-button active">
+            <i class="fas fa-traffic-light"></i> Traffic Layer
+          </button>
+          <button id="satellite-btn" class="traffic-button">
+            <i class="fas fa-satellite"></i> Satellite View
+          </button>
+        </div>
+
+        <div class="control-group">
+          <h3>Key Locations</h3>
+          <button id="sm-city-btn" class="traffic-button">
+            <i class="fas fa-store"></i> SM City Naga
+          </button>
+          <button id="central-btn" class="traffic-button">
+            <i class="fas fa-university"></i> Naga City Hall
+          </button>
+          <button id="peñafrancia-btn" class="traffic-button">
+            <i class="fas fa-church"></i> Peñafrancia Basilica
+          </button>
+        </div>
+
+        <div class="control-group traffic-incidents">
+          <h3>Recent Incidents</h3>
+          <div id="incidents-list">
+            <div class="incident-item">
+              <h4>Road Construction</h4>
+              <p>Magsaysay Avenue - Lane closure near City Hall</p>
+              <p class="time">Updated: 5 minutes ago</p>
+            </div>
+            <div class="incident-item">
+              <h4>Traffic Jam</h4>
+              <p>Panganiban Drive - Heavy traffic near SM City</p>
+              <p class="time">Updated: 15 minutes ago</p>
+            </div>
+            <div class="incident-item">
+              <h4>Accident Reported</h4>
+              <p>Elias Angeles Street - Minor collision</p>
+              <p class="time">Updated: 25 minutes ago</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <h3>Traffic Legend</h3>
+          <div class="traffic-legend">
+            <div class="legend-item">
+              <div class="legend-color" style="background: #4CAF50;"></div>
+              <span>Clear</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color" style="background: #FFC107;"></div>
+              <span>Moderate</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color" style="background: #F44336;"></div>
+              <span>Heavy</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-
-    <div class="alerts-container">
-      <div class="alert-card">
-        <div class="alert-header">
-          <h3 class="alert-title">Heavy Traffic on EDSA</h3>
-          <span class="alert-severity">MEDIUM</span>
-        </div>
-        <p class="alert-location">Northbound from Guadalupe to Ortigas</p>
-        <p class="alert-time">Updated: 10 minutes ago</p>
-      </div>
-      
-      <div class="alert-card">
-        <div class="alert-header">
-          <h3 class="alert-title">Traffic Congestion on C5</h3>
-          <span class="alert-severity">LOW</span>
-        </div>
-        <p class="alert-location">Southbound from Libis to Ortigas</p>
-        <p class="alert-time">Updated: 5 minutes ago</p>
-      </div>
-      
-      <div class="alert-card high">
-        <div class="alert-header">
-          <h3 class="alert-title">Road Closure on Roxas Boulevard</h3>
-          <span class="alert-severity high">HIGH</span>
-        </div>
-        <p class="alert-location">Eastbound from Baclaran to Malate</p>
-        <p class="alert-time">Updated: 15 minutes ago</p>
-      </div>
-    </div>
-  </main>
+  </div>
 
   <footer>
-    <p class="copyright">Copyright 2025. All rights reserved.</p>
+    <p>Copyright 2025 E-WAY. All rights reserved.</p>
   </footer>
 
-  <script src="../Scripts/traffic.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    // Toggle dropdown menu
+    function toggleDropdown() {
+      const menu = document.getElementById("dropdown-menu");
+      menu.classList.toggle("show");
+    }
+
+    // Close dropdown if clicked outside
+    window.addEventListener("click", function(e) {
+      if (!e.target.matches('.user-profile img')) {
+        const dropdowns = document.getElementsByClassName("dropdown-menu");
+        for (let i = 0; i < dropdowns.length; i++) {
+          if (dropdowns[i].classList.contains('show')) {
+            dropdowns[i].classList.remove('show');
+          }
+        }
+      }
+    });
+
+    // Initialize map centered on Naga City
+    const map = L.map('traffic-map', {
+      center: [13.6248, 123.2035],
+      zoom: 14,
+      zoomControl: false
+    });
+
+    // Base map layer
+    const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Satellite layer
+    const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+    });
+
+    // Traffic layer
+    const trafficLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m@221097413,traffic&x={x}&y={y}&z={z}', {
+      subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+      attribution: 'Traffic data &copy; Google'
+    }).addTo(map);
+
+    // Key locations in Naga City
+    const locations = {
+      'smCity': {
+        name: 'SM City Naga',
+        coords: [13.6255, 123.1874],
+        icon: 'store'
+      },
+      'cityHall': {
+        name: 'Naga City Hall',
+        coords: [13.6289, 123.1868],
+        icon: 'university'
+      },
+      'peñafrancia': {
+        name: 'Peñafrancia Basilica',
+        coords: [13.6319, 123.1996],
+        icon: 'church'
+      }
+    };
+
+    // Add markers for key locations
+    Object.values(locations).forEach(loc => {
+      L.marker(loc.coords, {
+        icon: L.divIcon({
+          html: `<i class="fas fa-${loc.icon}" style="color:#0f5132; font-size:20px;"></i>`,
+          className: 'custom-icon',
+          iconSize: [30, 30]
+        })
+      }).addTo(map).bindPopup(loc.name);
+    });
+
+    // Button controls
+    document.getElementById('traffic-layer-btn').addEventListener('click', function() {
+      this.classList.toggle('active');
+      if (this.classList.contains('active')) {
+        trafficLayer.addTo(map);
+      } else {
+        map.removeLayer(trafficLayer);
+      }
+    });
+
+    document.getElementById('satellite-btn').addEventListener('click', function() {
+      this.classList.toggle('active');
+      if (this.classList.contains('active')) {
+        map.removeLayer(osmLayer);
+        satelliteLayer.addTo(map);
+      } else {
+        map.removeLayer(satelliteLayer);
+        osmLayer.addTo(map);
+      }
+    });
+
+    // Location buttons
+    document.getElementById('sm-city-btn').addEventListener('click', () => {
+      map.flyTo(locations.smCity.coords, 16);
+    });
+
+    document.getElementById('central-btn').addEventListener('click', () => {
+      map.flyTo(locations.cityHall.coords, 16);
+    });
+
+    document.getElementById('peñafrancia-btn').addEventListener('click', () => {
+      map.flyTo(locations.peñafrancia.coords, 16);
+    });
+
+    // Simulate live traffic updates
+    function updateTrafficData() {
+      // In a real implementation, this would fetch from an API
+      console.log('Updating traffic data...');
+      setTimeout(updateTrafficData, 300000); // Update every 5 minutes
+    }
+
+    // Initial data load
+    updateTrafficData();
+  </script>
 </body>
 </html>
