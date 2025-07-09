@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Verification</title>
+  <script type="module">
+    import { verifyEmail } from '../js/supabase-config.js';
+    
+    document.addEventListener('DOMContentLoaded', async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const email = urlParams.get('email');
+      
+      if (email) {
+        try {
+          await verifyEmail(email);
+          document.getElementById('verification-status').innerHTML = `
+            <h2>Email Verified Successfully!</h2>
+            <p>Your registration is now complete and will appear in the system.</p>
+            <a href="/" class="btn">Return to Home</a>
+          `;
+        } catch (error) {
+          document.getElementById('verification-status').innerHTML = `
+            <h2>Verification Failed</h2>
+            <p>${error.message}</p>
+            <a href="/Registration/User Registration.html" class="btn">Try Again</a>
+          `;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div id="verification-status" style="text-align: center; margin-top: 50px;">
+    <h2>Verifying your email...</h2>
+  </div>
+</body>
+</html>
